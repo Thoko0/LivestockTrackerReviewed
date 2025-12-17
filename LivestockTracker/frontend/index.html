@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Livestock Tracker</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <nav id="menu-bar">
+        <img src="logo.png" alt="Livestock Tracker Logo" id="logo">
+        <button id="hamburger" aria-label="Menu">☰</button>
+        <button id="home-tab" class="tab active">Home</button>
+        <button id="maps-tab" class="tab">Maps</button>
+        <button id="devices-tab" class="tab">Devices</button>
+        <button id="findmy-tab" class="tab">Find My</button>
+        <button id="report-tab" class="tab">Report</button>
+    </nav>
+
+    <div id="home-section" class="section active">
+        <h2>Welcome to Livestock Tracker</h2>
+        <p>Manage your livestock with real-time tracking and reporting.</p>
+    </div>
+
+    <div id="maps-section" class="section">
+        <h2>Maps</h2>
+        <div id="maps-map" style="height: 500px;"></div>
+    </div>
+
+    <div id="devices-section" class="section">
+        <h2>Devices</h2>
+        <div class="table-container">
+            <table id="devices-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Device ID</th>
+                        <th>Lat</th>
+                        <th>Lon</th>
+                        <th>Speed</th>
+                        <th>Direction</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS will populate rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="findmy-section" class="section">
+        <h2>Find My</h2>
+        <p>Find your devices here.</p>
+    </div>
+
+    <div id="report-section" class="section">
+        <h2>Report</h2>
+        <p>Reports will be generated here.</p>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

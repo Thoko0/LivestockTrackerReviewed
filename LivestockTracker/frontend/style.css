@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fc;
+}
+
+#menu-bar {
+    background-color: #90D5FF;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Logo */
+#logo {
+    height: 40px;
+    margin-right: 20px;
+}
+
+/* Tabs */
+.tab {
+    background-color: #90D5FF;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.tab.active {
+    background-color: #0D47A1;
+}
+
+.section {
+    display: none;
+    padding: 20px;
+}
+
+.section.active {
+    display: block;
+}
+
+/* Devices Table Styling */
+.table-container {
+    width: 95%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th, td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #0D47A1;
+    color: white;
+    height: 45px;
+    border-radius: 0;
+}
+
+/* New device highlight */
+tr.new-device {
+    background-color: #d4edda;
+    transition: background-color 1.5s ease;
+}
+
+/* Action buttons */
+.action-btn {
+    padding: 4px 8px;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.edit-btn { background-color: #0D47A1; color: white; }
+.add-btn { background-color: #28a745; color: white; }
+.delete-btn { background-color: #dc3545; color: white; }
+
+/* Hamburger button */
+#hamburger {
+    display: none;
+    background-color: #0D47A1;
+    border: none;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Mobile menu */
+@media (max-width: 768px) {
+    #menu-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #logo {
+        margin: 0;
+    }
+
+    #hamburger {
+        display: block;
+    }
+
+    .tab {
+        display: none;
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .tab.show {
+        display: block;
+    }
+}
