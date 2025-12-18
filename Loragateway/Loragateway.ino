@@ -3,7 +3,7 @@
 #include <Adafruit_NeoPixel.h>
 
 // ===================== LoRa Pins =====================
-// ⚠️ Adjust if your wiring is different
+
 #define LORA_SCK   14
 #define LORA_MISO  12
 #define LORA_MOSI  13
