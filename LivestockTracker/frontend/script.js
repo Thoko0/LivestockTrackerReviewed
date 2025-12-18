@@ -16,6 +16,14 @@ let currentMarker = null;
 document
     .getElementById("searchTrackerBtn")
     .addEventListener("click", searchTracker);
+document
+    .getElementById("clearTableBtn")
+    .addEventListener("click", () => {
+        const tbody = document.getElementById("device-table-body");
+        tbody.innerHTML = ""; // Clear all rows
+    });
+
+
 
 async function searchTracker() {
     const trackerId = document.getElementById("trackerIdInput").value.trim();
@@ -26,36 +34,46 @@ async function searchTracker() {
     }
 
     try {
-        const response = await fetch(`${TRACKER_API}/${trackerId}`);
-        if (!response.ok) throw new Error("Tracker not found");
+    const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
 
-        const data = await response.json();
-        updateTable(data);
-        updateMap(data);
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
 
+    const data = await response.json();  // <-- get the JSON from response
+    console.log("Fetched data:", data);   // <-- log it AFTER parsing
+
+    updateTable(data);
+    // updateMap(data);  // if you have a map function
     } catch (err) {
-        alert("Tracker not found");
-        clearTable();
-        console.error(err);
+        console.error("FETCH FAILED:", err);
+        alert(err.message);
     }
 }
+
 
 // ===========================
 // UPDATE TABLE
 // ===========================
 function updateTable(data) {
     const tbody = document.getElementById("device-table-body");
-    tbody.innerHTML = `
-        <tr>
-            <td>${data.device_id}</td>
-            <td>${data.latitude.toFixed(6)}</td>
-            <td>${data.longitude.toFixed(6)}</td>
-            <td>${data.ax}, ${data.ay}, ${data.az}</td>
-            <td>${data.gyro_x}, ${data.gyro_y}, ${data.gyro_z}</td>
-            <td>${new Date(data.timestamp).toLocaleString()}</td>
-        </tr>
+
+    // Create a new table row
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${data.device_id ?? ""}</td>
+        <td>${(data.latitude ?? 0).toFixed(6)}</td>
+        <td>${(data.longitude ?? 0).toFixed(6)}</td>
+        <td>${data.ax ?? ""}, ${data.ay ?? ""}, ${data.az ?? ""}</td>
+        <td>${data.gyro_x ?? ""}, ${data.gyro_y ?? ""}, ${data.gyro_z ?? ""}</td>
+        <td>${data.timestamp ? new Date(data.timestamp).toLocaleString() : "Invalid Date"}</td>
     `;
+
+    // Append the new row to the table body
+    tbody.appendChild(row);
 }
+
 
 function clearTable() {
     document.getElementById("device-table-body").innerHTML = "";

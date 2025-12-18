@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="connect-src * 'self' http: https: ws:;">
     <title>Livestock Tracker</title>
 
     <!-- Leaflet CSS -->
@@ -73,6 +74,7 @@
     <div id="tracker-search">
         <input type="text" id="trackerIdInput" placeholder="Enter Tracker ID">
         <button id="searchTrackerBtn">Search</button>
+        <button id="clearTableBtn">Clear Table</button>
     </div>
 
     <table id="device-table">
