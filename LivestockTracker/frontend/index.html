@@ -31,7 +31,38 @@
 
 <!-- MAPS -->
 <div id="maps-section" class="section">
-    <div id="maps-map" style="height: 500px;"></div>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <div class="row">
+        <div class="col-lg-7 col-md-7 col-12">
+            <form method="post" role="form" id="RegisterPOS" class="php-email-form">
+                <div class="row">
+                <div class="col-md-12">
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-12 form-group mt-3">
+                        <input type="text" name="Latitude" class="form-control" id="Latitude" placeholder="Latitude" required>
+                        <div class="invalid-feedback">Please enter latitude.</div>
+                    </div>
+                    <div class="col-md-6 col-12 form-group mt-3">
+                        <input type="text" name="Longitude" class="form-control" id="Longitude" placeholder="Longitude" required>
+                        <div class="invalid-feedback">Please enter longitude.</div>
+                    </div>
+                    <div class="col-md-6 col-12 form-group mt-3">
+                        <input type="text" name="Pincode" class="form-control" id="Pincode" placeholder="Pincode" required>
+                        <div class="invalid-feedback">Please enter pincode.</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-5 col-md-5 col-12">
+            
+        </div>
+    </div>
 </div>
 
 <!-- DEVICES -->

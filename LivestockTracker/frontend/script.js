@@ -64,29 +64,52 @@ function clearTable() {
 // ===========================
 // MAP
 // ===========================
-function initMap() {
-    mapsMap = L.map("maps-map").setView([-15.4, 28.3], 7);
+var map = L.map('map');
+// Add a base map layer (you can choose any tile layer you prefer)
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
-    }).addTo(mapsMap);
-}
+   }).addTo(map);
 
-function updateMap(data) {
-    if (!mapsMap) return;
+   var marker = L.marker([0, 0], {
+       draggable: true // Allow marker to be dragged
+   }).addTo(map);
+   window.onload = function () {
+       getLocation();
+   };
+   function getLocation() {
+       if (navigator.geolocation) {
 
-    const latlng = [data.latitude, data.longitude];
+           navigator.geolocation.getCurrentPosition(function (position)
+           {
+               var latitude = position.coords.latitude;
+               var longitude = position.coords.longitude;
+               document.getElementById("Latitude").value = latitude;
+               document.getElementById("Longitude").value = longitude;
+               var userLatLng = [position.coords.latitude, position.coords.longitude];
+               map.setView(userLatLng, 13); // Set map view to user's location
+               marker.setLatLng(userLatLng);
+               // Fetch address details using OpenStreetMap Nominatim API
+               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+                   .then(response => response.json())
+                   .then(data => {
+                       var address = data.address;
+                       console.log(address);
+                       var district = address.state_district.replace(" District", "");
 
-    if (currentMarker) mapsMap.removeLayer(currentMarker);
+                       document.getElementById("City").value = district;
+                       document.getElementById("State").value = address.state;
+                       document.getElementById("Pincode").value = address.postcode;
 
-    currentMarker = L.marker(latlng)
-        .addTo(mapsMap)
-        .bindPopup(`<b>${data.device_id}</b>`)
-        .openPopup();
-
-    mapsMap.setView(latlng, 15);
-}
-
+                   })
+                   .catch(error => console.error("Error fetching address details:", error));
+           },
+               function (error) {
+               console.error("Error getting user location:", error.message);
+           });
+       } else {
+           alert("Geolocation is not supported by this browser.");
+       }
+   }
 // ===========================
 // TAB SWITCHING
 // ===========================

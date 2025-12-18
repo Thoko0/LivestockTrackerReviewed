@@ -19,6 +19,11 @@ body {
     height: 40px;
     margin-right: 20px;
 }
+#map {
+       height: 1000px;
+       width: 800px;
+       border-radius: 8px;
+   }
 
 /* Tabs */
 .tab {
