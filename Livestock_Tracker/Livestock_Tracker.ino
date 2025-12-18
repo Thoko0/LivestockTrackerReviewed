@@ -24,6 +24,7 @@ void setup() {
     pixel.clear();
     pixel.show();
 
+
     // ---- Init peripherals ----
     GPS_Init();
     MPU6050_Init(21, 17);
@@ -56,8 +57,8 @@ void loop() {
         Tone_trigger = false;
     }
 
+
     String payload = "{";
-    payload += "\"device_id\":\"ESP32_01\",";
     payload += "\"lat\":" + String(gpsData.valid ? gpsData.latitude : 0.0, 6) + ",";
     payload += "\"lon\":" + String(gpsData.valid ? gpsData.longitude : 0.0, 6) + ",";
     payload += "\"ax\":" + String(mpuData.ax, 3) + ",";
@@ -71,5 +72,5 @@ void loop() {
     Serial.println(payload);
     LoRa_Send(payload);
 
-    delay(50000);
+    delay(5000);
 }

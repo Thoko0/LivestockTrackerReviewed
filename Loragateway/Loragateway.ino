@@ -2,24 +2,14 @@
 #include <LoRa.h>
 #include <Adafruit_NeoPixel.h>
 
-// ===================== LoRa Pins =====================
-
-#define LORA_SCK   14
-#define LORA_MISO  12
-#define LORA_MOSI  13
-#define LORA_SS    15
-#define LORA_RST   10
-#define LORA_DIO0  9
-
-#define LORA_FREQ  433E6   // use 868E6 or 433E6 if needed
-
+char rec[256];
+int counter = 0;
 // ===================== NeoPixel =====================
-#define NEOPIXEL_PIN  5
+#define NEOPIXEL_PIN  38
 #define NUM_PIXELS    1
 
 Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
-// ===================== Setup =====================
 void setup() {
   Serial.begin(115200);
   delay(200);
@@ -30,40 +20,40 @@ void setup() {
   pixel.show();
 
   // LoRa init
+  
+  SPI.begin(14, 12, 13);  // SCK, MISO, MOSI
+  LoRa.setPins(15, 10, 9);  // CS, RST, DIO0
   Serial.println("[LoRa] Initializing...");
-  SPI.begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_SS);
-  LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
 
-  if (!LoRa.begin(LORA_FREQ)) {
-    Serial.println("[LoRa] ERROR: Failed to start");
+  if (!LoRa.begin(433E6)) {
+    Serial.println("Starting LoRa failed!");
     while (1);
   }
 
   LoRa.setSyncWord(0x34);   // must match sender
-  LoRa.setTxPower(20);
-
-  Serial.println("[LoRa] Gateway ready — listening...");
+  LoRa.receive();
+  Serial.println("LoRa Gateway ready — listening...");
 }
 
 // ===================== Loop =====================
 void loop() {
+  counter = 0;
   int packetSize = LoRa.parsePacket();
+
   if (packetSize) {
-
-    // 🔵 Blue flash while receiving
-    pixel.setPixelColor(0, pixel.Color(0, 0, 255));
-    pixel.show();
-
-    String received = "";
-    while (LoRa.available()) {
-      received += (char)LoRa.read();
+    Serial.print("Packet received: ");
+    while (LoRa.available() && counter < sizeof(rec) - 1) {
+    rec[counter++] = (char)LoRa.read();
     }
+    rec[counter] = '\0';
 
     // Print ONLY received data (PySerial friendly)
-    Serial.println(received);
-
-    // Turn LED off
+    while (Serial.println(rec)){;
+    pixel.setPixelColor(0, pixel.Color(255, 0, 0));  // RED
+    pixel.show();
+    delay(5000);
     pixel.clear();
     pixel.show();
+    }
   }
 }

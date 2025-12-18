@@ -1,17 +1,20 @@
 #include "LoRadriver.h"
 
 void LoRa_Init() {
-    Serial.println("LoRa Initializing...");
-    SPI.begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_SS);
-    LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
-    LoRa.setSyncWord(0x34);
-    LoRa.setTxPower(20);
+    
 
-    if (!LoRa.begin(LORA_FREQ)) {
+    // --- SPI PINS (your custom wiring) ---
+    SPI.begin(14, 12, 13);  // SCK, MISO, MOSI
+    LoRa.setPins(15, 10, 9);  // CS, RST, DIO0
+   
+
+    if (!LoRa.begin(433E6)) {
         Serial.println("LoRa ERROR: Module not found!");
         while(1);
     }
-    Serial.println("LoRa Module ready");
+    LoRa.setSyncWord(0x34);
+    LoRa.setTxPower(20);
+    Serial.println("LoRa ready");
 }
 
 void LoRa_Send(const String &payload) {
@@ -19,12 +22,11 @@ void LoRa_Send(const String &payload) {
 
         LoRa.beginPacket();
         LoRa.print(payload);
-        if (LoRa.endPacket() == 1) {
-            Serial.println("LoRa Packet sent successfully!");
-        } else {
-            Serial.println("Failed to send packet");
-        }
+        LoRa.endPacket();
+        Serial.println("Sent ID: " + String(payload));
 
+        delay(500);
+        
     }
     else if (payload.length() == 0){ 
         return;
