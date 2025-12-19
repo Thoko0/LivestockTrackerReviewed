@@ -7,23 +7,19 @@ const TRACKER_API = `http://${SERVER_IP}:8000/tracker`;
 // ===========================
 // MAP VARIABLES
 // ===========================
-let mapsMap;
-let currentMarker = null;
+let map;
+let trackerMarker = null;
 
 // ===========================
-// SEARCH TRACKER
+// DEVICE SEARCH (TABLE)
 // ===========================
 document
     .getElementById("searchTrackerBtn")
     .addEventListener("click", searchTracker);
+
 document
     .getElementById("clearTableBtn")
-    .addEventListener("click", () => {
-        const tbody = document.getElementById("device-table-body");
-        tbody.innerHTML = ""; // Clear all rows
-    });
-
-
+    .addEventListener("click", clearTable);
 
 async function searchTracker() {
     const trackerId = document.getElementById("trackerIdInput").value.trim();
@@ -34,23 +30,22 @@ async function searchTracker() {
     }
 
     try {
-    const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
+        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
 
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-    }
+        if (!response.ok) {
+            throw new Error(`Tracker not found`);
+        }
 
-    const data = await response.json();  // <-- get the JSON from response
-    console.log("Fetched data:", data);   // <-- log it AFTER parsing
+        const data = await response.json();
+        console.log("Fetched data:", data);
 
-    updateTable(data);
-    // updateMap(data);  // if you have a map function
+        updateTable(data);
+
     } catch (err) {
         console.error("FETCH FAILED:", err);
         alert(err.message);
     }
 }
-
 
 // ===========================
 // UPDATE TABLE
@@ -58,76 +53,90 @@ async function searchTracker() {
 function updateTable(data) {
     const tbody = document.getElementById("device-table-body");
 
-    // Create a new table row
     const row = document.createElement("tr");
 
     row.innerHTML = `
         <td>${data.device_id ?? ""}</td>
-        <td>${(data.latitude ?? 0).toFixed(6)}</td>
-        <td>${(data.longitude ?? 0).toFixed(6)}</td>
+        <td>${Number(data.latitude).toFixed(6)}</td>
+        <td>${Number(data.longitude).toFixed(6)}</td>
         <td>${data.ax ?? ""}, ${data.ay ?? ""}, ${data.az ?? ""}</td>
         <td>${data.gyro_x ?? ""}, ${data.gyro_y ?? ""}, ${data.gyro_z ?? ""}</td>
-        <td>${data.timestamp ? new Date(data.timestamp).toLocaleString() : "Invalid Date"}</td>
+        <td>${data.timestamp ? new Date(data.timestamp).toLocaleString() : ""}</td>
     `;
 
-    // Append the new row to the table body
     tbody.appendChild(row);
 }
-
 
 function clearTable() {
     document.getElementById("device-table-body").innerHTML = "";
 }
 
 // ===========================
-// MAP
+// MAP INITIALIZATION
 // ===========================
-var map = L.map('map');
-// Add a base map layer (you can choose any tile layer you prefer)
-   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+function initMap() {
+    map = L.map("map").setView([0, 0], 2);
 
-   }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+}
 
-   var marker = L.marker([0, 0], {
-       draggable: true // Allow marker to be dragged
-   }).addTo(map);
-   window.onload = function () {
-       getLocation();
-   };
-   function getLocation() {
-       if (navigator.geolocation) {
+// ===========================
+// MAP SEARCH (LOCATE TRACKER)
+// ===========================
+document
+    .getElementById("mapSearchBtn")
+    .addEventListener("click", locateTrackerOnMap);
 
-           navigator.geolocation.getCurrentPosition(function (position)
-           {
-               var latitude = position.coords.latitude;
-               var longitude = position.coords.longitude;
-               document.getElementById("Latitude").value = latitude;
-               document.getElementById("Longitude").value = longitude;
-               var userLatLng = [position.coords.latitude, position.coords.longitude];
-               map.setView(userLatLng, 13); // Set map view to user's location
-               marker.setLatLng(userLatLng);
-               // Fetch address details using OpenStreetMap Nominatim API
-               fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
-                   .then(response => response.json())
-                   .then(data => {
-                       var address = data.address;
-                       console.log(address);
-                       var district = address.state_district.replace(" District", "");
+async function locateTrackerOnMap() {
+    const trackerId = document
+        .getElementById("mapTrackerIdInput")
+        .value
+        .trim();
 
-                       document.getElementById("City").value = district;
-                       document.getElementById("State").value = address.state;
-                       document.getElementById("Pincode").value = address.postcode;
+    if (!trackerId) {
+        alert("Enter a tracker ID");
+        return;
+    }
 
-                   })
-                   .catch(error => console.error("Error fetching address details:", error));
-           },
-               function (error) {
-               console.error("Error getting user location:", error.message);
-           });
-       } else {
-           alert("Geolocation is not supported by this browser.");
-       }
-   }
+    try {
+        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
+
+        if (!response.ok) {
+            throw new Error("Tracker not found");
+        }
+
+        const data = await response.json();
+
+        const lat = Number(data.latitude);
+        const lon = Number(data.longitude);
+
+        if (isNaN(lat) || isNaN(lon)) {
+            alert("Tracker has no valid location");
+            return;
+        }
+
+        // Remove old marker
+        if (trackerMarker) {
+            map.removeLayer(trackerMarker);
+        }
+
+        // Add marker
+        trackerMarker = L.marker([lat, lon])
+            .addTo(map)
+            .bindPopup(`Tracker ${trackerId}`)
+            .openPopup();
+
+        // Zoom to tracker
+        map.setView([lat, lon], 15);
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    }
+}
+
 // ===========================
 // TAB SWITCHING
 // ===========================
@@ -144,9 +153,10 @@ tabs.forEach(tab => {
             .getElementById(tab.id.replace("-tab", "-section"))
             .classList.add("active");
 
-        if (tab.id === "maps-tab" && !mapsMap) {
+        // Initialize map ONLY when Maps tab opens
+        if (tab.id === "maps-tab" && !map) {
             initMap();
-            setTimeout(() => mapsMap.invalidateSize(), 200);
+            setTimeout(() => map.invalidateSize(), 200);
         }
     });
 });

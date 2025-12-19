@@ -20,10 +20,10 @@ body {
     margin-right: 20px;
 }
 #map {
-       height: 1000px;
-       width: 800px;
-       border-radius: 8px;
-   }
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+}
 
 /* Tabs */
 .tab {
@@ -138,4 +138,44 @@ tr.new-device {
     .tab.show {
         display: block;
     }
+}
+
+/* =========================
+   MAP TRACKER SEARCH (Overlay)
+   ========================= */
+#map-tracker-search {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 1000;
+    width: 160px;
+}
+
+#map-tracker-search input {
+    width: 100%;
+    padding: 6px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+#map-tracker-search button {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background-color: #0D47A1;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#map-tracker-search button:hover {
+    background-color: #08306b;
 }
