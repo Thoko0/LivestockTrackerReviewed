@@ -5,8 +5,8 @@
 
 //========== Pin Configuration ===========
 #define GPS_UART       1
-#define GPS_RX_PIN     37
-#define GPS_TX_PIN     36
+#define GPS_RX_PIN     47
+#define GPS_TX_PIN     48
 #define GPS_BAUDRATE   9600
 
 //=========== Objects ====================
