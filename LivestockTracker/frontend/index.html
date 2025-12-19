@@ -37,54 +37,51 @@
 </div>
 
 <!-- MAPS -->
-<div id="maps-section" class="section">
+<div id="maps-section" class="section" style="position: relative;">
+    <div id="map"></div>
 
-    <div class="container-fluid position-relative">
-        <div class="row">
-            <div class="col-12">
-                <!-- MAP -->
-                <div id="map" style="height: 500px;"></div>
-
-                <!-- 🔍 MAP SEARCH (MID-RIGHT OVERLAY) -->
-                <div id="map-tracker-search">
-                    <input
-                        type="text"
-                        id="mapTrackerIdInput"
-                        placeholder="Tracker ID"
-                    />
-                    <button id="mapSearchBtn">Locate</button>
-                </div>
-            </div>
-        </div>
+    <div id="map-tracker-search">
+        <input type="text" id="mapTrackerIdInput" placeholder="Tracker ID">
+        <button id="mapSearchBtn">Locate</button>
     </div>
-
 </div>
 
 <!-- DEVICES -->
 <div id="devices-section" class="section">
+    <h2>Manage Trackers</h2>
 
-    <h2>Search Tracker</h2>
-
-    <div id="tracker-search">
-        <input type="text" id="trackerIdInput" placeholder="Enter Tracker ID">
-        <button id="searchTrackerBtn">Search</button>
-        <button id="clearTableBtn">Clear Table</button>
+    <!-- Add Tracker Form -->
+    <div id="add-tracker-form">
+        <input type="text" id="newTrackerId" placeholder="Tracker ID">
+        <input type="text" id="newTrackerName" placeholder="Tracker Name (optional)">
+        <button id="addTrackerBtn" class="add-btn">Add Tracker</button>
     </div>
 
-    <table id="device-table">
-        <thead>
-            <tr>
-                <th>Device ID</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Accel (ax, ay, az)</th>
-                <th>Gyro (x, y, z)</th>
-                <th>Last Seen</th>
-            </tr>
-        </thead>
-        <tbody id="device-table-body"></tbody>
-    </table>
+    <!-- Tracker Search -->
+    <div id="tracker-search">
+        <input type="text" id="trackerIdInput" placeholder="Enter Tracker ID">
+        <button id="searchTrackerBtn" class="refresh-btn">Search / Refresh</button>
+    </div>
 
+    <!-- Devices Table -->
+    <div class="table-container">
+        <table id="device-table">
+            <thead>
+                <tr>
+                    <th>Device ID</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Accel (ax, ay, az)</th>
+                    <th>Gyro (x, y, z)</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="device-table-body">
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- REPORT -->

@@ -1,3 +1,6 @@
+/* =========================
+   Global Styles
+   ========================= */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -19,6 +22,8 @@ body {
     height: 40px;
     margin-right: 20px;
 }
+
+/* Map */
 #map {
     height: 500px;
     width: 100%;
@@ -76,7 +81,6 @@ th {
     background-color: #0D47A1;
     color: white;
     height: 45px;
-    border-radius: 0;
 }
 
 /* New device highlight */
@@ -85,7 +89,7 @@ tr.new-device {
     transition: background-color 1.5s ease;
 }
 
-/* Action buttons */
+/* Action Buttons */
 .action-btn {
     padding: 4px 8px;
     margin: 2px;
@@ -95,9 +99,35 @@ tr.new-device {
     font-size: 12px;
 }
 
-.edit-btn { background-color: #0D47A1; color: white; }
-.add-btn { background-color: #28a745; color: white; }
-.delete-btn { background-color: #dc3545; color: white; }
+/* Blue buttons (Refresh) */
+.refresh-btn {
+    background-color: #0D47A1;
+    color: white;
+}
+
+.refresh-btn:hover {
+    background-color: #08306b;
+}
+
+/* Green buttons (Add) */
+.add-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.add-btn:hover {
+    background-color: #218838;
+}
+
+/* Red buttons (Delete) */
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #a71d2a;
+}
 
 /* Hamburger button */
 #hamburger {
@@ -138,11 +168,14 @@ tr.new-device {
     .tab.show {
         display: block;
     }
+
+    td button {
+        width: 100%;
+        margin-bottom: 4px;
+    }
 }
 
-/* =========================
-   MAP TRACKER SEARCH (Overlay)
-   ========================= */
+/* Map Tracker Search Overlay */
 #map-tracker-search {
     position: absolute;
     top: 50%;
@@ -178,4 +211,33 @@ tr.new-device {
 
 #map-tracker-search button:hover {
     background-color: #08306b;
+}
+
+/* Add Tracker Form */
+#add-tracker-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+#add-tracker-form input {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+#add-tracker-form button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#add-tracker-form button:hover {
+    background-color: #218838;
 }
