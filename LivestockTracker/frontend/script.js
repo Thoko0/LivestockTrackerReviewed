@@ -2,7 +2,7 @@
 // CONFIG
 // ===========================
 const SERVER_IP = "%SERVER_IP%";
-const TRACKER_API = `http://${SERVER_IP}/tracker`;
+const TRACKER_API = `http://${SERVER_IP}/tracker_data`;
 
 // ===========================
 // MAP VARIABLES
