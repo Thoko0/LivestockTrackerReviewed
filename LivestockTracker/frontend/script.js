@@ -421,7 +421,7 @@ let availableTrackers = []; // filled from backend
 
 async function loadTrackers() {
     try {
-        const response = await fetch(`${TRACKER_API}/list`);
+        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/trackers/list`);
         if (!response.ok) throw new Error("Failed to fetch trackers");
         availableTrackers = await response.json();
         renderTrackers(availableTrackers);
