@@ -137,6 +137,7 @@ def get_history(device_id: str, db: Session = Depends(get_db)):
     )
     return [
         {
+            "device_id": r.device_id,
             "timestamp": r.timestamp.isoformat(),
             "latitude": r.latitude,
             "longitude": r.longitude,
