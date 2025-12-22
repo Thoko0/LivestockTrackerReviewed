@@ -8,8 +8,22 @@ from database import SessionLocal, engine
 from models import Base, TrackerData, User
 from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "https://livestocktrackerzaf.onrender.com",  # your frontend URL
+    "http://localhost:3000",                     # if testing locally
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # -------------------------
 # Database Initialization
