@@ -118,9 +118,9 @@ def get_tracker_location(device_id: str, db: Session = Depends(get_db)):
     "device_id": record.device_id,
     "latitude": record.latitude,
     "longitude": record.longitude,
-    "speed": record.speed,
-    "behavior": record.behavior,
-    "created_at": record.timestamp.isoformat()
+    "speed": getattr(record, "speed", None),
+    "behavior": getattr(record, "behavior", None),
+    "created_at": record.timestamp.isoformat() if record.timestamp else None
 }
 
 
