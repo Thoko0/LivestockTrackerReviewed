@@ -1,8 +1,8 @@
 // ===========================
 // CONFIG
 // ===========================
-const SERVER_IP = "127.0.0.1";
-const TRACKER_API = `http://${SERVER_IP}:8000/tracker`;
+const SERVER_IP = "https://livestocktrackerwebapp.onrender.com";
+const TRACKER_API = `http://${SERVER_IP}/tracker`;
 
 // ===========================
 // MAP VARIABLES
