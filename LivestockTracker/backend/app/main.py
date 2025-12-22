@@ -167,7 +167,7 @@ def create_test_user():
 create_test_user()
 
 # Listing trackers endpoint #
-@app.get("/tracker_data/list")
+@app.get("/trackers/list")
 def get_tracker_list(db: Session = Depends(get_db)):
     # Return distinct device_ids (or you can include names if you have them)
     trackers = db.query(TrackerData.device_id).distinct().all()
