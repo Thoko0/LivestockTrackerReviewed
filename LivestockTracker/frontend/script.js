@@ -97,9 +97,6 @@ async function locateTrackerOnMap() {
         return alert("Enter a tracker ID");
     }
 
-    // Replace with your Render backend URL
-    const TRACKER_API = "https://livestocktrackerwebapp.onrender.com/tracker_data";
-
     try {
         const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
         
