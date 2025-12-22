@@ -1,7 +1,7 @@
 // ===========================
 // CONFIG
 // ===========================
-const SERVER_IP = "https://livestocktrackerwebapp.onrender.com";
+const SERVER_IP = "%SERVER_IP%";
 const TRACKER_API = `http://${SERVER_IP}/tracker`;
 
 // ===========================
