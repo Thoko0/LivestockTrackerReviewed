@@ -90,6 +90,13 @@ def get_latest_data(db: Session = Depends(get_db)):
 
     return latest_records
 
+# Listing trackers endpoint #
+@app.get("/trackers/list")
+def get_tracker_list(db: Session = Depends(get_db)):
+    # Return distinct device_ids (or you can include names if you have them)
+    trackers = db.query(TrackerData.device_id).distinct().all()
+    return [{"id": t[0]} for t in trackers]  # simple list of trackers
+
 # -------------------------
 # New Endpoint for Map Search
 # -------------------------
@@ -166,9 +173,3 @@ def create_test_user():
 
 create_test_user()
 
-# Listing trackers endpoint #
-@app.get("/trackers/list")
-def get_tracker_list(db: Session = Depends(get_db)):
-    # Return distinct device_ids (or you can include names if you have them)
-    trackers = db.query(TrackerData.device_id).distinct().all()
-    return [{"id": t[0]} for t in trackers]  # simple list of trackers
