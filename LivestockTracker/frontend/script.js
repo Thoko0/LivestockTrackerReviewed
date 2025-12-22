@@ -1,7 +1,7 @@
 // ===========================
 // CONFIG
 // ===========================
-const SERVER_IP = "%SERVER_IP%";
+const SERVER_IP = os.getenv("SERVER_IP")
 const TRACKER_API = `http://${SERVER_IP}/tracker`;
 
 // ===========================
