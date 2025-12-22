@@ -93,25 +93,44 @@ document
 
 async function locateTrackerOnMap() {
     const trackerId = document.getElementById("mapTrackerIdInput").value.trim();
-    if (!trackerId) return alert("Enter a tracker ID");
+    if (!trackerId) {
+        return alert("Enter a tracker ID");
+    }
+
+    // Replace with your Render backend URL
+    const TRACKER_API = "https://livestocktrackerwebapp.onrender.com/tracker_data";
 
     try {
         const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
-        if (!response.ok) throw new Error("Tracker not found");
+        
+        if (!response.ok) {
+            if (response.status === 404) {
+                return alert("Tracker not found in database");
+            } else {
+                throw new Error("Failed to fetch tracker data");
+            }
+        }
 
         const data = await response.json();
         const lat = Number(data.latitude);
         const lon = Number(data.longitude);
 
-        if (isNaN(lat) || isNaN(lon)) return alert("Tracker has no valid location");
+        if (isNaN(lat) || isNaN(lon)) {
+            return alert("Tracker has no valid location");
+        }
 
-        if (trackerMarker) map.removeLayer(trackerMarker);
+        // Remove previous marker if exists
+        if (trackerMarker) {
+            trackerMarker.remove();
+        }
 
+        // Add new marker
         trackerMarker = L.marker([lat, lon])
             .addTo(map)
             .bindPopup(`Tracker ${trackerId}`)
             .openPopup();
 
+        // Center map on the tracker
         map.setView([lat, lon], 15);
 
     } catch (err) {

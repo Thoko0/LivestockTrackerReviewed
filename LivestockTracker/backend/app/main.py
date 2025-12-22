@@ -7,6 +7,7 @@ from sqlalchemy import desc
 from database import SessionLocal, engine
 from models import Base, TrackerData, User
 from schemas import TrackerDataSchema, UserLogin
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -74,6 +75,23 @@ def get_latest_data(db: Session = Depends(get_db)):
             latest_records.append(record)
 
     return latest_records
+
+# -------------------------
+# New Endpoint for Map Search
+# -------------------------
+@app.get("/tracker_data/{device_id}")
+def get_tracker_location(device_id: str, db: Session = Depends(get_db)):
+    record = (
+        db.query(TrackerData)
+        .filter(TrackerData.device_id == device_id)
+        .order_by(desc(TrackerData.timestamp))
+        .first()
+    )
+
+    if not record:
+        return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+    return {"latitude": record.latitude, "longitude": record.longitude}
 
 # -------------------------
 # Login Endpoint
