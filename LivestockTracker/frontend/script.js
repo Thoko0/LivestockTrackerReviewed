@@ -400,3 +400,52 @@ function switchTracker(n) {
 
     document.getElementById('chartTitle').innerText = 'Tracker ' + n;
 }
+// -------------------------------
+// DYNAMIC TRACKERS MODAL
+// -------------------------------
+let availableTrackers = []; // filled from backend
+
+async function loadTrackers() {
+    try {
+        const response = await fetch(`${TRACKER_API}/list`);
+        if (!response.ok) throw new Error("Failed to fetch trackers");
+        availableTrackers = await response.json();
+        renderTrackers(availableTrackers);
+    } catch (err) {
+        console.error("Error loading trackers:", err);
+    }
+}
+
+function renderTrackers(trackers) {
+    const container = document.getElementById("trackersContainer");
+    container.innerHTML = "";
+
+    trackers.forEach((tracker, index) => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-outline-primary";
+        btn.textContent = tracker.name || tracker.id || `Tracker ${index+1}`;
+        btn.onclick = () => switchTracker(tracker.id || index+1);
+        btn.setAttribute("data-bs-dismiss", "modal");
+        container.appendChild(btn);
+    });
+
+    const searchInput = document.getElementById("trackerSearch");
+    if (trackers.length > 5) {
+        searchInput.style.display = "block";
+        searchInput.addEventListener("input", filterTrackers);
+    } else {
+        searchInput.style.display = "none";
+    }
+}
+
+function filterTrackers(e) {
+    const term = e.target.value.toLowerCase();
+    const filtered = availableTrackers.filter(t => (t.name || t.id || "").toLowerCase().includes(term));
+    renderTrackers(filtered);
+}
+
+// Load trackers when modal opens
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("trackersModal");
+    modal.addEventListener("show.bs.modal", loadTrackers);
+});
