@@ -68,6 +68,7 @@ function tableRowHTML(tracker) {
         <td>${tracker.created_at ? new Date(tracker.created_at).toLocaleString() : ""}</td>
         <td>
             <button class="refresh-btn" onclick="refreshTracker('${tracker.device_id}')">Refresh</button>
+            <button class="map-btn" onclick="findOnMap('${tracker.device_id}')">Find on map</button>
             <button class="delete-btn" onclick="deleteTracker('${tracker.device_id}', this)">Delete</button>
         </td>
     `;
@@ -134,6 +135,22 @@ async function locateTrackerOnMap() {
         console.error(err);
         alert(err.message);
     }
+}
+
+// ===========================
+// FIND TRACKER FROM DEVICES → MAP
+// ===========================
+function findOnMap(trackerId) {
+    // 1. Switch to Maps tab
+    document.getElementById("maps-tab").click();
+
+    // 2. Fill the map search input
+    document.getElementById("mapTrackerIdInput").value = trackerId;
+
+    // 3. Ensure map is ready, then locate
+    setTimeout(() => {
+        locateTrackerOnMap();
+    }, 300);
 }
 
 // ===========================
