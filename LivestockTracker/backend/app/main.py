@@ -112,7 +112,15 @@ def get_tracker_location(device_id: str, db: Session = Depends(get_db)):
     if not record:
         return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
-    return {"latitude": record.latitude, "longitude": record.longitude}
+    return {
+    "device_id": record.device_id,
+    "latitude": record.latitude,
+    "longitude": record.longitude,
+    "speed": record.speed,
+    "behavior": record.behavior,
+    "created_at": record.timestamp.isoformat()
+}
+
 
 # -------------------------
 # Login Endpoint
