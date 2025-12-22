@@ -410,3 +410,45 @@ tr.new-device {
     height: 100%;
     display: block;
 }
+/* ================================
+   REPORT TAB – DESKTOP DEFAULT
+   ================================ */
+.report-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+/* ================================
+   REPORT TAB – MOBILE ONLY
+   ================================ */
+@media (max-width: 414px) {
+
+  /* Only affect the Reports tab */
+  #report-section .report-layout {
+    flex-direction: column;
+  }
+
+  /* Charts stack vertically */
+  #report-section .left-charts {
+    height: auto !important;
+  }
+
+  #report-section .left-charts .card {
+    height: 320px;
+  }
+
+  /* Metrics stack vertically */
+  #report-section .metrics-row {
+    flex-direction: column;
+  }
+
+  #report-section .metric-card {
+    width: 100%;
+  }
+
+  /* Reduce chart padding */
+  #report-section canvas {
+    max-width: 100%;
+  }
+}
