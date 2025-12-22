@@ -205,12 +205,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <div class="d-grid gap-2">
-          <button class="btn btn-outline-primary" onclick="switchTracker(1)" data-bs-dismiss="modal">Tracker 1</button>
-          <button class="btn btn-outline-primary" onclick="switchTracker(2)" data-bs-dismiss="modal">Tracker 2</button>
-          <button class="btn btn-outline-primary" onclick="switchTracker(3)" data-bs-dismiss="modal">Tracker 3</button>
+            <input type="text" id="trackerSearch" class="form-control mb-3" placeholder="Search trackers..." style="display:none" />
+            <div id="trackersContainer" class="d-grid gap-2">
+                <!-- Buttons will be dynamically injected here -->
+            </div>
         </div>
-      </div>
     </div>
   </div>
 </div>
