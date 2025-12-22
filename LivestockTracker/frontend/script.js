@@ -1,8 +1,7 @@
 // ===========================
 // CONFIG
 // ===========================
-const SERVER_IP = "https://livestocktrackerwebapp.onrender.com";
-const TRACKER_API = `https://${SERVER_IP}/tracker_data`;
+const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 // ===========================
 // MAP VARIABLES
 // ===========================
