@@ -62,8 +62,9 @@ function tableRowHTML(tracker) {
         <td>${tracker.device_id}</td>
         <td>${Number(tracker.latitude ?? 0).toFixed(6)}</td>
         <td>${Number(tracker.longitude ?? 0).toFixed(6)}</td>
-        <td>${tracker.ax ?? ""}, ${tracker.ay ?? ""}, ${tracker.az ?? ""}</td>
-        <td>${tracker.gyro_x ?? ""}, ${tracker.gyro_y ?? ""}, ${tracker.gyro_z ?? ""}</td>
+        <td>${tracker.speed ?? ""}</td>
+        <td>${tracker.distance ?? ""}</td>
+        <td>${tracker.behavior ?? ""}</td>
         <td>${tracker.created_at ? new Date(tracker.created_at).toLocaleString() : ""}</td>
         <td>
             <button class="refresh-btn" onclick="refreshTracker('${tracker.device_id}')">Refresh</button>
