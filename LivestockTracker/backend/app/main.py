@@ -47,7 +47,7 @@ def add_data(data: TrackerDataSchema, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(record)
 
-    print(f"✅ SAVED ID {record.id}")
+    print(f"SAVED ID {record.id}")
     return {"status": "saved", "id": record.id}
 
 @app.get("/data", response_model=List[TrackerDataSchema])
