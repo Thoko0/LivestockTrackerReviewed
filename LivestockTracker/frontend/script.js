@@ -160,7 +160,7 @@ async function addTracker() {
     if (!deviceId) return alert("Tracker ID is required");
 
     try {
-        const response = await fetch(`https://livestocktrackerzaf.onrender.com/trackers`, {
+        const response = await fetch(`${TRACKER_API}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ device_id: deviceId, name: name || null })
@@ -203,7 +203,7 @@ async function deleteTracker(deviceId, buttonElement) {
     if (!confirm(`Are you sure you want to delete tracker "${deviceId}"?`)) return;
 
     try {
-        const response = await fetch(`https://livestocktrackerzaf.onrender.com/trackers/${encodeURIComponent(deviceId)}`, {
+        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(deviceId)}`, {
             method: "DELETE"
         });
 
