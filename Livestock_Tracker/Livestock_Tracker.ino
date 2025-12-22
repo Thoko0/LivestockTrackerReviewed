@@ -27,8 +27,11 @@ void setup() {
 
     // ---- Init peripherals ----
     GPS_Init();
-    MPU6050_Init(21, 17);
-
+    Serial.println("GPS initalized");
+    if (!MPU6050_Init(21, 17)) {
+        Serial.println("MPU6050 Init Failed!");
+        while (1);
+    }
     init_spiffs();
     init_i2s();
 
@@ -61,12 +64,8 @@ void loop() {
     String payload = "{";
     payload += "\"lat\":" + String(gpsData.valid ? gpsData.latitude : 0.0, 6) + ",";
     payload += "\"lon\":" + String(gpsData.valid ? gpsData.longitude : 0.0, 6) + ",";
-    payload += "\"ax\":" + String(mpuData.ax, 3) + ",";
-    payload += "\"ay\":" + String(mpuData.ay, 3) + ",";
-    payload += "\"az\":" + String(mpuData.az, 3) + ",";
-    payload += "\"gyro_x\":" + String(mpuData.gx, 3) + ",";
-    payload += "\"gyro_y\":" + String(mpuData.gy, 3) + ",";
-    payload += "\"gyro_z\":" + String(mpuData.gz, 3);
+    payload += "\"Pitch\":" + String((int)mpuData.pitch); + ",";
+    payload += "\"Behavior\":" + String(mpuData.behavior); 
     payload += "}";
 
     Serial.println(payload);
