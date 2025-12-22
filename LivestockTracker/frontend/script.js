@@ -42,7 +42,12 @@ async function searchTracker() {
 // ===========================
 function addOrUpdateTableRow(tracker) {
     const tbody = document.getElementById("device-table-body");
-    let existingRow = document.querySelector(`tr[data-device-id="${tracker.device_id}"]`);
+    const deviceId = tracker.device_id || tracker.id || tracker.name;
+
+    let existingRow = document.querySelector(
+        `tr[data-device-id="${deviceId}"]`
+    );
+
 
     if (existingRow) {
         // Update existing row
@@ -58,8 +63,10 @@ function addOrUpdateTableRow(tracker) {
 
 // HTML for table row
 function tableRowHTML(tracker) {
+    const deviceId = tracker.device_id || tracker.id || tracker.name;
+
     return `
-        <td>${tracker.device_id}</td>
+        <td>${deviceId}</td>
         <td>${Number(tracker.latitude ?? 0).toFixed(6)}</td>
         <td>${Number(tracker.longitude ?? 0).toFixed(6)}</td>
         <td>${tracker.speed ?? ""}</td>
@@ -67,12 +74,13 @@ function tableRowHTML(tracker) {
         <td>${tracker.behavior ?? ""}</td>
         <td>${tracker.created_at ? new Date(tracker.created_at).toLocaleString() : ""}</td>
         <td>
-            <button class="refresh-btn" onclick="refreshTracker('${tracker.device_id}')">Refresh</button>
-            <button class="map-btn" onclick="findOnMap('${tracker.device_id}')">Find on map</button>
-            <button class="delete-btn" onclick="deleteTracker('${tracker.device_id}', this)">Delete</button>
+            <button class="refresh-btn" onclick="refreshTracker('${deviceId}')">Refresh</button>
+            <button class="map-btn" onclick="findOnMap('${deviceId}')">Find on map</button>
+            <button class="delete-btn" onclick="deleteTracker('${deviceId}', this)">Delete</button>
         </td>
     `;
 }
+
 
 // ===========================
 // MAP INITIALIZATION
