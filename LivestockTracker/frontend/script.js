@@ -7,6 +7,7 @@ const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 // ===========================
 let map;
 let trackerMarker = null;
+let availableTrackers = []; // filled from backend
 
 
 // ===========================
@@ -93,6 +94,45 @@ function initMap() {
         attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 }
+// ===========================
+// SHOW ALL TRACKERS ON MAP
+// ===========================
+async function showAllTrackers() {
+    try {
+        const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/list');
+        if (!response.ok) throw new Error("Failed to fetch trackers");
+
+        const trackers = await response.json();
+
+        // Remove existing markers first
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker) {
+                map.removeLayer(layer);
+            }
+        });
+
+        // Add markers for all trackers
+        trackers.forEach(tracker => {
+            const lat = Number(tracker.latitude);
+            const lon = Number(tracker.longitude);
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+                L.marker([lat, lon])
+                    .addTo(map)
+                    .bindPopup(`Tracker ${tracker.device_id}`);
+            }
+        });
+    } catch (err) {
+        console.error("SHOW ALL TRACKERS FAILED:", err);
+        alert(err.message);
+    }
+}
+
+// Attach to button
+document
+    .getElementById("showAllTrackersBtn")
+    .addEventListener("click", showAllTrackers);
+
 
 // ===========================
 // MAP SEARCH (LOCATE TRACKER)
@@ -444,7 +484,6 @@ function switchTracker(n) {
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
 // -------------------------------
-let availableTrackers = []; // filled from backend
 
 async function loadTrackers() {
     try {

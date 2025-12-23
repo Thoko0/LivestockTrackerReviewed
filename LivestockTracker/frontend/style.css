@@ -52,6 +52,9 @@ body {
 
 .section.active {
     display: block;
+    width: 80%;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 /* Devices Table Styling */
@@ -67,7 +70,7 @@ body {
 
 table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
 }
 
