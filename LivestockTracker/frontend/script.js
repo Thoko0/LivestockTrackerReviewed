@@ -8,6 +8,7 @@ const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 let map;
 let trackerMarker = null;
 
+
 // ===========================
 // DEVICE SEARCH (TABLE)
 // ===========================
