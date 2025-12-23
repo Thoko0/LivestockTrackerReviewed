@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function showAllTrackers() {
     try {
-        const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/list');
+        const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/map');
         if (!response.ok) throw new Error("Failed to fetch trackers");
 
         const trackers = await response.json();

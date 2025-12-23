@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import APIRouter, FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -9,8 +9,11 @@ from models import Base, TrackerData, User
 from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from database import get_db
 
+router = APIRouter()
 app = FastAPI()
+
 
 origins = [
     "https://livestocktrackerzaf.onrender.com",  # your frontend URL
@@ -99,6 +102,37 @@ def get_tracker_list(db: Session = Depends(get_db)):
     trackers = db.query(TrackerData.device_id).distinct().all()
     return [{"id": t[0]} for t in trackers]  # simple list of trackers
 
+#locate trackers on map endpoint
+@router.get("/trackers/map")
+def get_trackers_for_map(db: Session = Depends(get_db)):
+    # Fetch latest location for each device
+    subquery = (
+        db.query(
+            TrackerData.device_id,
+            db.func.max(TrackerData.timestamp).label("latest_ts")
+        )
+        .group_by(TrackerData.device_id)
+        .subquery()
+    )
+    
+    # Join to get latitude and longitude
+    query = (
+        db.query(
+            TrackerData.device_id,
+            TrackerData.latitude,
+            TrackerData.longitude
+        )
+        .join(subquery, (TrackerData.device_id == subquery.c.device_id) & 
+                       (TrackerData.timestamp == subquery.c.latest_ts))
+    )
+    
+    trackers = query.all()
+    
+    # Return as list of dicts for JSON
+    return [
+        {"device_id": t.device_id, "latitude": t.latitude, "longitude": t.longitude}
+        for t in trackers
+    ]
 # -------------------------
 # New Endpoint for Map Search
 # -------------------------
