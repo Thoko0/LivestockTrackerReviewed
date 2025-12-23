@@ -1,4 +1,4 @@
-from fastapi import APIRouter, FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
@@ -10,7 +10,6 @@ from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-router = APIRouter()
 app = FastAPI()
 
 
@@ -102,13 +101,13 @@ def get_tracker_list(db: Session = Depends(get_db)):
     return [{"id": t[0]} for t in trackers]  # simple list of trackers
 
 #locate trackers on map endpoint
-@router.get("/trackers/map")
+@app.get("/trackers/map")
 def get_trackers_for_map(db: Session = Depends(get_db)):
     # Fetch latest location for each device
     subquery = (
         db.query(
             TrackerData.device_id,
-            db.func.max(TrackerData.timestamp).label("latest_ts")
+            func.max(TrackerData.timestamp).label("latest_ts")
         )
         .group_by(TrackerData.device_id)
         .subquery()
@@ -121,7 +120,7 @@ def get_trackers_for_map(db: Session = Depends(get_db)):
             TrackerData.latitude,
             TrackerData.longitude
         )
-        .join(subquery, (TrackerData.device_id == subquery.c.device_id) & 
+        .join(subquery, (TrackerData.device_id == subquery.c.device_id) &
                        (TrackerData.timestamp == subquery.c.latest_ts))
     )
     
