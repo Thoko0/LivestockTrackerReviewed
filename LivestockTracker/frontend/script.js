@@ -97,6 +97,13 @@ function initMap() {
 // ===========================
 // SHOW ALL TRACKERS ON MAP
 // ===========================
+// Attach to button
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .getElementById("showAllTrackersBtn")
+        .addEventListener("click", showAllTrackers);
+});
+
 async function showAllTrackers() {
     try {
         const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/list');
@@ -127,11 +134,6 @@ async function showAllTrackers() {
         alert(err.message);
     }
 }
-
-// Attach to button
-document
-    .getElementById("showAllTrackersBtn")
-    .addEventListener("click", showAllTrackers);
 
 
 // ===========================
