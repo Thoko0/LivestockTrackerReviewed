@@ -9,7 +9,6 @@ from models import Base, TrackerData, User
 from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from database import get_db
 
 router = APIRouter()
 app = FastAPI()
