@@ -539,7 +539,7 @@ tr.new-device {
 /* =========================
    Mobile Bottom Map Controls - Modern Blue Buttons
    ========================= */
-@media (max-width: 1000px) {
+@media (max-width: 100%) {
     #mapControls {
         position: absolute;
         bottom: 20px;
