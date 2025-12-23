@@ -22,6 +22,25 @@ function initMap() {
 }
 
 // ===========================
+// MAP INITIALIZATION (for mini-map in card)
+// ===========================
+function initMapCard() {
+
+    // Initialize mini-map in the card container
+    map = L.map("mapCard", {
+        zoomControlOptions: {
+        position: 'topright'
+        }
+    }).setView([51.505, -0.09], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap",
+        maxZoom: 18,
+    }).addTo(map);
+
+}
+
+// ===========================
 // SHOW ALL TRACKERS ON MAP
 // ===========================
 // Attach to button
