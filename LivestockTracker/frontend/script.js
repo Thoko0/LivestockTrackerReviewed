@@ -8,81 +8,7 @@ const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 let map;
 let trackerMarker = null;
 let availableTrackers = []; // filled from backend
-
-
-// ===========================
-// DEVICE SEARCH (TABLE)
-// ===========================
-document
-    .getElementById("searchTrackerBtn")
-    .addEventListener("click", searchTracker);
-
-async function searchTracker() {
-    const trackerId = document.getElementById("trackerIdInput").value.trim();
-    if (!trackerId) {
-        alert("Enter a tracker ID");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
-        if (!response.ok) throw new Error("Tracker not found");
-
-        const data = await response.json();
-        console.log("Fetched data:", data);
-
-        addOrUpdateTableRow(data);
-
-    } catch (err) {
-        console.error("FETCH FAILED:", err);
-        alert(err.message);
-    }
-}
-
-// ===========================
-// ADD OR UPDATE TABLE ROW
-// ===========================
-function addOrUpdateTableRow(tracker) {
-    const tbody = document.getElementById("device-table-body");
-    const deviceId = tracker.device_id || tracker.id || tracker.name;
-
-    let existingRow = document.querySelector(
-        `tr[data-device-id="${deviceId}"]`
-    );
-
-
-    if (existingRow) {
-        // Update existing row
-        existingRow.innerHTML = tableRowHTML(tracker);
-    } else {
-        // Add new row
-        const row = document.createElement("tr");
-        row.setAttribute("data-device-id", tracker.device_id);
-        row.innerHTML = tableRowHTML(tracker);
-        tbody.appendChild(row);
-    }
-}
-
-// HTML for table row
-function tableRowHTML(tracker) {
-    const deviceId = tracker.device_id || tracker.id || tracker.name;
-
-    return `
-        <td>${deviceId}</td>
-        <td>${Number(tracker.latitude ?? 0).toFixed(6)}</td>
-        <td>${Number(tracker.longitude ?? 0).toFixed(6)}</td>
-        <td>${tracker.speed ?? ""}</td>
-        <td>${tracker.distance ?? ""}</td>
-        <td>${tracker.behavior ?? ""}</td>
-        <td>${tracker.created_at ? new Date(tracker.created_at).toLocaleString() : ""}</td>
-        <td>
-            <button class="refresh-btn" onclick="refreshTracker('${deviceId}')">Refresh</button>
-            <button class="map-btn" onclick="findOnMap('${deviceId}')">Find on map</button>
-            <button class="delete-btn" onclick="deleteTracker('${deviceId}', this)">Delete</button>
-        </td>
-    `;
-}
-
+let trackerMarkers = []; // store all markers for easy removal
 
 // ===========================
 // MAP INITIALIZATION
@@ -94,6 +20,7 @@ function initMap() {
         attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 }
+
 // ===========================
 // SHOW ALL TRACKERS ON MAP
 // ===========================
@@ -111,12 +38,16 @@ async function showAllTrackers() {
 
         const trackers = await response.json();
 
-        // Remove existing markers first
-        map.eachLayer(layer => {
-            if (layer instanceof L.Marker) {
-                map.removeLayer(layer);
-            }
-        });
+        // Remove existing markers
+        trackerMarkers.forEach(m => map.removeLayer(m));
+        trackerMarkers = [];
+
+        if (!trackers || trackers.length === 0) {
+            console.log("No trackers found");
+            return;
+        }
+
+        const bounds = [];
 
         // Add markers for all trackers
         trackers.forEach(tracker => {
@@ -124,17 +55,25 @@ async function showAllTrackers() {
             const lon = Number(tracker.longitude);
 
             if (!isNaN(lat) && !isNaN(lon)) {
-                L.marker([lat, lon])
+                const marker = L.marker([lat, lon])
                     .addTo(map)
                     .bindPopup(`Tracker ${tracker.device_id}`);
+                trackerMarkers.push(marker);
+
+                bounds.push([lat, lon]);
             }
         });
+
+        // Fit map to markers
+        if (bounds.length > 0) {
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+
     } catch (err) {
         console.error("SHOW ALL TRACKERS FAILED:", err);
         alert(err.message);
     }
 }
-
 
 // ===========================
 // MAP SEARCH (LOCATE TRACKER)
@@ -145,41 +84,26 @@ document
 
 async function locateTrackerOnMap() {
     const trackerId = document.getElementById("mapTrackerIdInput").value.trim();
-    if (!trackerId) {
-        return alert("Enter a tracker ID");
-    }
+    if (!trackerId) return alert("Enter a tracker ID");
 
     try {
         const response = await fetch(`${TRACKER_API}/${encodeURIComponent(trackerId)}`);
-        
-        if (!response.ok) {
-            if (response.status === 404) {
-                return alert("Tracker not found in database");
-            } else {
-                throw new Error("Failed to fetch tracker data");
-            }
-        }
+        if (!response.ok) throw new Error("Tracker not found");
 
         const data = await response.json();
         const lat = Number(data.latitude);
         const lon = Number(data.longitude);
 
-        if (isNaN(lat) || isNaN(lon)) {
-            return alert("Tracker has no valid location");
-        }
+        if (isNaN(lat) || isNaN(lon)) return alert("Tracker has no valid location");
 
         // Remove previous marker if exists
-        if (trackerMarker) {
-            trackerMarker.remove();
-        }
+        if (trackerMarker) trackerMarker.remove();
 
-        // Add new marker
         trackerMarker = L.marker([lat, lon])
             .addTo(map)
             .bindPopup(`Tracker ${trackerId}`)
             .openPopup();
 
-        // Center map on the tracker
         map.setView([lat, lon], 15);
 
     } catch (err) {
@@ -231,6 +155,7 @@ tabs.forEach(tab => {
 document.getElementById("hamburger").addEventListener("click", () => {
     tabs.forEach(tab => tab.classList.toggle("show"));
 });
+
 
 // ===========================
 // ADD TRACKER
