@@ -103,30 +103,7 @@ def get_tracker_list(db: Session = Depends(get_db)):
 #locate trackers on map endpoint
 @app.get("/trackers/map")
 def get_trackers_for_map(db: Session = Depends(get_db)):
-    # Fetch latest location for each device
-    subquery = (
-        db.query(
-            TrackerData.device_id,
-            func.max(TrackerData.timestamp).label("latest_ts")
-        )
-        .group_by(TrackerData.device_id)
-        .subquery()
-    )
-    
-    # Join to get latitude and longitude
-    query = (
-        db.query(
-            TrackerData.device_id,
-            TrackerData.latitude,
-            TrackerData.longitude
-        )
-        .join(subquery, (TrackerData.device_id == subquery.c.device_id) &
-                       (TrackerData.timestamp == subquery.c.latest_ts))
-    )
-    
-    trackers = query.all()
-    
-    # Return as list of dicts for JSON
+    trackers = db.query(TrackerData.device_id, TrackerData.latitude, TrackerData.longitude).all()
     return [
         {"device_id": t.device_id, "latitude": t.latitude, "longitude": t.longitude}
         for t in trackers
