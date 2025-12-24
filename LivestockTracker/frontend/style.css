@@ -1,6 +1,45 @@
 /* =========================
    Global Styles
    ========================= */
+/* Custom Button Styles - Apply to ALL buttons */
+.btn-custom {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+              border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-custom:hover {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.btn-custom-outline-primary {
+  color: #0d6efd;
+  border-color: #0d6efd;
+  background-color: transparent;
+}
+.me-2 {
+  margin-right: 0.5rem !important;
+}
+
+/* Optional: Smaller button variant */
+.btn-custom-sm {
+  padding: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 6px;
+}
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -25,10 +64,11 @@ body {
 
 /* Map */
 #map {
-    height: 500px;
+    height: 570px;
     width: 100%;
     border-radius: 8px;
 }
+
 
 /* Tabs */
 .tab {
@@ -47,14 +87,11 @@ body {
 
 .section {
     display: none;
-    padding: 20px;
+    height: 100%; /* Makes section fill viewport height */
 }
 
 .section.active {
     display: block;
-    width: 80%;
-    margin-left:auto;
-    margin-right:auto;
 }
 
 /* Devices Table Styling */
@@ -136,9 +173,10 @@ tr.new-device {
     background-color: #17a2b8;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px;
+    font-size: 14px;
     margin-left: 4px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
 }
 
@@ -158,7 +196,9 @@ tr.new-device {
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
+    visibility: collapse;
 }
+
 
 /* Mobile menu */
 @media (max-width: 768px) {
@@ -174,6 +214,7 @@ tr.new-device {
 
     #hamburger {
         display: block;
+        visibility: visible;
     }
 
     .tab {
@@ -193,46 +234,8 @@ tr.new-device {
     }
 }
 
-/* Map Tracker Search Overlay */
-#map-tracker-search {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    background: white;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    z-index: 1000;
-    width: 160px;
-}
-
-#map-tracker-search input {
-    width: 100%;
-    padding: 6px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-}
-
-#map-tracker-search button {
-    width: 100%;
-    padding: 6px;
-    border: none;
-    border-radius: 6px;
-    background-color: #0D47A1;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-#map-tracker-search button:hover {
-    background-color: #08306b;
-}
-
 /* Add Tracker Form */
-#add-tracker-form {
+#add-tracker-form  {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
@@ -246,6 +249,7 @@ tr.new-device {
     font-size: 14px;
 }
 
+
 #add-tracker-form button {
     background-color: #28a745;
     color: white;
@@ -256,9 +260,19 @@ tr.new-device {
     font-size: 14px;
 }
 
-#add-tracker-form button:hover {
-    background-color: #218838;
+#trackerIdInput #searchTrackerBtn {
+    margin-left: 0;
+    justify-content: center;
 }
+
+#trackerIdInput{
+    line-height: 1.5;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;}
+
+
 /*REPORTS STYLE*/
 /* Right panel height */
 .chart-card { 
@@ -297,7 +311,13 @@ tr.new-device {
     color: #888;
 }
 
-/* Layout for the 3 Cards - MODIFIED for side-by-side */
+/* Layout for the 4 Cards - MODIFIED for side-by-side */
+
+.metric-card-large{
+    gap: 16px;           /* Consistent spacing */
+    width: 100%;
+}
+
 .metrics-row {
     display: flex;
     flex-direction: row; /* Forces horizontal alignment */
@@ -313,7 +333,7 @@ tr.new-device {
     background: #ffffff;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 4px 10px rgba(5, 0, 0, 0.678);
+    box-shadow: 0 4px 10px rgba(170, 165, 165, 0.678);
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Keeps content spaced nicely vertically */
@@ -424,8 +444,8 @@ tr.new-device {
 
 /* Allow charts to fully scale */
 #pieChart, #lineChart {
-    width: 100%;
-    height: 100%;
+    width: 85%;
+    height: 85%;
     display: block;
 }
 /* ================================
@@ -440,7 +460,7 @@ tr.new-device {
 /* ================================
    REPORT TAB – MOBILE ONLY
    ================================ */
-@media (max-width: 414px) {
+@media (max-width: 576px) {
 
   /* Only affect the Reports tab */
   #report-section .report-layout {
@@ -449,7 +469,7 @@ tr.new-device {
 
   /* Charts stack vertically */
   #report-section .left-charts {
-    height: auto !important;
+    height: 85%;
   }
 
   #report-section .left-charts .card {
@@ -537,38 +557,102 @@ tr.new-device {
 }
 
 /* =========================
-   Mobile Bottom Map Controls - Modern Blue Buttons
+   Mobile Table Header Adjustments
    ========================= */
-@media (max-width: 100%) {
+   
+/* DEVICES TAB TABLE */
+
+.table-header-full { display: table-cell; }
+.table-header-mobile { display: none; }
+
+/* Mobile: show acronyms */
+@media (max-width: 576px) {
+    .table-header-full { display: none; }
+    .table-header-mobile { display: table-cell; }
+
+    #tracker-search {
+        flex-direction: column;
+        align-items: center; /* Changed from 'right' to 'center' */
+    }
+    #tracker-search input {
+        width: 100%;
+        max-width: 300px;
+
+    }
+    #tracker-search button {
+        width: 100%;
+        max-width: 300px;
+    }
+    #add-tracker-form {
+        flex-direction: column;
+        align-items: center; 
+    }
+    #add-tracker-form input {
+        width: 100%;
+        max-width: 300px;
+    }
+    #add-tracker-form button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* MAP MOBILE VIEW ADJUSTMENTS */
+/* Mobile view adjustments */
+@media (max-width: 576px) {
+    /* Make map section fill remaining space below nav */
+    #maps-section {
+        height: calc(100vh - 70px) !important; /* Subtract nav bar height */
+        width: 100vw !important;
+        position: relative !important; /* Change from fixed to relative */
+        top: 0;
+        left: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 1;
+    }
+    
+    /* Make map itself fill the container */
+    #maps-section #map {
+        height: 100% !important;
+        width: 100% !important;
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    
+    /* Adjust map controls for mobile */
     #mapControls {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.9);
-        padding: 10px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
+        max-width: 90% !important;
+        margin-left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        bottom: 10px !important;
+        width: 90% !important;
+        padding: 10px !important;
+        background-color: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.4);
     }
-    #mapControls input {
-        padding: 6px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+    
+    /* Stack controls vertically on mobile */
+    #mapControls {
+        flex-direction: column !important;
+        align-items: stretch !important;
     }
+    
+    #mapControls input,
     #mapControls button {
-        background-color: #0D47A1;
-        color: white;
-        border: none;
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
     }
-    #mapControls button:hover {
-        background-color: #08306b;
+    
+    #mapControls button:last-child {
+        margin-bottom: 0 !important;
     }
 }
