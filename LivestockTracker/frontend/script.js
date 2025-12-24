@@ -6,9 +6,17 @@ const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 // MAP VARIABLES
 // ===========================
 let map;
+let miniMap;
+let pathLine;
 let trackerMarker = null;
 let availableTrackers = []; // filled from backend
 let trackerMarkers = []; // store all markers for easy removal
+function ensureMapReady() {
+    if (!map) {
+        initMap();
+        setTimeout(() => map.invalidateSize(), 200);
+    }
+}
 
 // ===========================
 // MAP INITIALIZATION
@@ -40,6 +48,8 @@ function initMapCard() {
 
     async function loadDailyPath(deviceId, date) {
     try {
+
+        ensureMapReady(); 
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
         const points = await res.json();
 
@@ -89,7 +99,8 @@ function initMapCard() {
     const date = document.getElementById("dateSelect").value;
 
     // Only proceed if tracker is available
-    if (!availableTrackers.includes(trackerId)) {
+    const exists = availableTrackers.some(t => t.device_id === trackerId);
+    if (!exists) {
         console.warn("Selected tracker not available:", trackerId);
         return;
     }
@@ -114,6 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function showAllTrackers() {
     try {
+
+        ensureMapReady();   
+
         const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/map');
         if (!response.ok) throw new Error("Failed to fetch trackers");
 
@@ -164,6 +178,9 @@ document
     .addEventListener("click", locateTrackerOnMap);
 
 async function locateTrackerOnMap() {
+
+    ensureMapReady();   
+
     const trackerId = document.getElementById("mapTrackerIdInput").value.trim();
     if (!trackerId) return alert("Enter a tracker ID");
 
