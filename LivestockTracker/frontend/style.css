@@ -563,7 +563,6 @@ tr.new-device {
 /* DEVICES TAB TABLE */
 
 .table-header-full { display: table-cell; }
-.table-header-mobile { display: none; }
 
 /* Mobile: show acronyms */
 @media (max-width: 576px) {
