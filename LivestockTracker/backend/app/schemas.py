@@ -4,13 +4,11 @@ class TrackerDataSchema(BaseModel):
     device_id: str
     lat: float
     lon: float
-    ax: float
-    ay: float
-    az: float
-    gyro_x: float
-    gyro_y: float
-    gyro_z: float
-
+    speed: float
+    distance: float
+    behavior: float
+    timestamp: str
+    
 class UserLogin(BaseModel):
     username: str
     password: str
