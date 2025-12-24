@@ -461,7 +461,7 @@ async function switchTracker(deviceId, date) {
         // Fetch chart data from backend
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
         const tracker = await response.json();
-
+        console.log("Fetching data for device:", deviceId, "on date:", date);
         document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
 
     } catch (err) {
