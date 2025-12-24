@@ -51,14 +51,11 @@ def add_data(data: TrackerDataSchema, db: Session = Depends(get_db)):
 
     record = TrackerData(
         device_id=data.device_id,
-        latitude=data.lat,
-        longitude=data.lon,
-        ax=data.ax,
-        ay=data.ay,
-        az=data.az,
-        gyro_x=data.gyro_x,
-        gyro_y=data.gyro_y,
-        gyro_z=data.gyro_z
+        latitude=data.latitude,
+        longitude=data.longitude,
+        speed=data.speed,
+        distance=data.distance,
+        behavior=data.behavior,
     )
 
     db.add(record)
@@ -160,12 +157,9 @@ def get_history(device_id: str, db: Session = Depends(get_db)):
             "timestamp": r.timestamp.isoformat(),
             "latitude": r.latitude,
             "longitude": r.longitude,
-            "ax": r.ax,
-            "ay": r.ay,
-            "az": r.az,
-            "gyro_x": r.gyro_x,
-            "gyro_y": r.gyro_y,
-            "gyro_z": r.gyro_z
+            "speed": r.speed,
+            "distance": r.distance,
+            "behavior": r.behavior,
         }
         for r in records
     ]

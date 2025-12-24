@@ -9,12 +9,9 @@ class TrackerData(Base):
     device_id = Column(String, index=True)
     latitude = Column(Float)
     longitude = Column(Float)
-    ax = Column(Float)
-    ay = Column(Float)
-    az = Column(Float)
-    gyro_x = Column(Float)
-    gyro_y = Column(Float)
-    gyro_z = Column(Float)
+    speed = Column(Float)
+    distance = Column(Float)
+    behavior = Column(Float)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
 class User(Base):
