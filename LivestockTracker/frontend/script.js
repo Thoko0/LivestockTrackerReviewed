@@ -463,6 +463,31 @@ const pathData = [
 
 updateTotalDistance(pathData);
 
+// Switch tracker function
+function switchTracker(n) {
+    const t = trackers[n];
+
+    if (!t) {
+        console.warn("Tracker not found:", n, "Available trackers:", Object.keys(trackers));
+        return;
+    }
+
+    // Make sure all arrays exist
+    const labels = t.timeLabels || [];
+    const values = t.behaviorValues || [];
+    const pie = t.pieValues || [];
+
+    lineChart.data.labels = labels;
+    lineChart.data.datasets[0].data = values;
+    lineChart.data.datasets[0].pointBackgroundColor = values.map(v => behaviorColors[v] || "gray");
+    lineChart.update();
+
+    pieChart.data.datasets[0].data = pie;
+    pieChart.update();
+
+    document.getElementById('chartTitle').innerText = 'Tracker ' + n;
+}
+
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
 // -------------------------------
