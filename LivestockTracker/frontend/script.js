@@ -320,15 +320,15 @@ const trackers = {}; // Filled from backend with tracker data};
 const lineChart = new Chart(document.getElementById('lineChart'), {
     type: 'line',
     data: {
-        labels: trackers[1].timeLabels,
+        labels: [],
         datasets: [{
-            data: trackers[1].behaviorValues,
+            data: [],
             borderColor: '#36A2EB',
             backgroundColor: 'rgba(54,162,235,0.08)',
             fill: true,
             tension: 0.3,
             pointRadius: 6,
-            pointBackgroundColor: trackers[1].behaviorValues.map(v => behaviorColors[v])
+            pointBackgroundColor:[1]
         }]
     },
     options: {
@@ -357,7 +357,7 @@ const pieChart = new Chart(document.getElementById('pieChart'), {
     data: {
         labels: behaviorMap,
         datasets: [{
-            data: trackers[1].pieValues,
+            data: [],
             backgroundColor: behaviorColors,
             borderWidth: 2
         }]
@@ -451,11 +451,7 @@ function updateTotalDistance(gpsPoints) {
 }
 
 // Example data from backend
-const pathData = [
-    { lat: -15.3875, lng: 28.3228 },
-    { lat: -15.3880, lng: 28.3235 },
-    { lat: -15.3895, lng: 28.3250 }
-];
+const pathData = [];
 
 updateTotalDistance(pathData);
 
@@ -463,18 +459,8 @@ updateTotalDistance(pathData);
 async function switchTracker(deviceId, date) {
     try {
         // Fetch chart data from backend
-        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
-        const t = await res.json();
-
-        // Update line chart
-        lineChart.data.labels = t.timeLabels || [];
-        lineChart.data.datasets[0].data = t.behaviorValues || [];
-        lineChart.data.datasets[0].pointBackgroundColor = (t.behaviorValues || []).map(v => behaviorColors[v] || "gray");
-        lineChart.update();
-
-        // Update pie chart
-        pieChart.data.datasets[0].data = t.pieValues || [];
-        pieChart.update();
+        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
+        const tracker = await response.json();
 
         document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
 
@@ -482,6 +468,25 @@ async function switchTracker(deviceId, date) {
         console.error("Failed to fetch chart data:", err);
     }
 }
+
+        // Update line chart
+function updateCharts(t) {
+    const labels = t.timeLabels || [];
+    const values = t.behaviorValues || [];
+    const pie = t.pieValues || [];
+
+    // Update line chart
+    lineChart.data.labels = tracker.timeLabels || [];
+    lineChart.data.datasets[0].data = tracker.behaviorValues || [];
+    lineChart.data.datasets[0].pointBackgroundColor = (tracker.behaviorValues || []).map(v => behaviorColors[v] || "gray");
+    lineChart.update();
+
+    // Update pie chart
+    pieChart.data.datasets[0].data = tracker.pieValues || [];
+    pieChart.update();
+}
+
+        
 
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
