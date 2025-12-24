@@ -462,11 +462,6 @@ tr.new-device {
    ================================ */
 @media (max-width: 576px) {
 
-  /* Only affect the Reports tab */
-  #report-section .report-layout {
-    flex-direction: column;
-  }
-
   /* Charts stack vertically */
   #report-section .left-charts {
     height: 85%;
@@ -594,5 +589,65 @@ tr.new-device {
     #add-tracker-form button {
         width: 100%;
         max-width: 300px;
+    }
+
+}
+/* MAP MOBILE VIEW ADJUSTMENTS */
+/* Mobile view adjustments */
+@media (max-width: 576px) {
+    /* Make map section fill remaining space below nav */
+    #maps-section {
+        height: calc(100vh - 70px) !important; /* Subtract nav bar height */
+        width: 100vw !important;
+        position: relative !important; /* Change from fixed to relative */
+        top: 0;
+        left: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 1;
+    }
+    
+    /* Make map itself fill the container */
+    #maps-section #map {
+        height: 100% !important;
+        width: 100% !important;
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    
+    /* Adjust map controls for mobile */
+    #mapControls {
+        max-width: 90% !important;
+        margin-left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        bottom: 10px !important;
+        width: 90% !important;
+        padding: 10px !important;
+        background-color: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.4);
+    }
+    
+    /* Stack controls vertically on mobile */
+    #mapControls {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    #mapControls input,
+    #mapControls button {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    #mapControls button:last-child {
+        margin-bottom: 0 !important;
     }
 }
