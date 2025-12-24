@@ -87,10 +87,50 @@
 <!-- MAPS -->
 <div id="maps-section" class="section" style="position: relative;">
     <div id="map"></div>
-    <div id="mapControls">
-        <input type="text" id="mapTrackerIdInput" placeholder="Tracker ID">
-        <button id="mapSearchBtn" class="add-btn">Locate</button>
-        <button id="showAllTrackersBtn">Show All Trackers</button>
+    <style>
+    #mapControls {
+        z-index: 9999 !important;
+        position: absolute !important;
+    }
+    
+  
+    .leaflet-container {
+        z-index: 1 !important;
+    }
+    
+    /* Ensure map controls appear above map tiles */
+    .leaflet-top, .leaflet-bottom {
+        z-index: 999 !important;
+    }
+</style>
+
+<div id="mapControls"
+     class="d-flex flex-wrap align-items-center gap-2 p-3 rounded shadow-lg position-absolute start-0"
+     style="
+       bottom: 40px;
+       z-index: 9999;
+       max-width: 400px;
+       margin-left: 20px;
+       background-color:transparent;
+       backdrop-filter: blur(8px);
+       -webkit-backdrop-filter: blur(8px);
+       border: 1px solid rgba(255, 255, 255, 0.281);
+     ">
+
+        <input type="text" 
+               id="mapTrackerIdInput" 
+               class=" btn-custom-sm btn-custom-outline-primary me-2"
+               placeholder="Tracker ID"
+               style="flex: 1; min-width: 120px;">
+        
+        <!-- Buttons with custom styling -->
+        <button id="mapSearchBtn" class="btn-custom btn-custom-sm btn-custom-outline-primary me-2">
+             Locate
+        </button>
+        
+        <button id="showAllTrackersBtn" class="btn-custom btn-custom-sm btn-custom-outline-primary me-2">
+             Show All Trackers
+        </button>
     </div>
 </div>
 
@@ -102,13 +142,13 @@
     <div id="add-tracker-form">
         <input type="text" id="newTrackerId" placeholder="Tracker ID">
         <input type="text" id="newTrackerName" placeholder="Tracker Name (optional)">
-        <button id="addTrackerBtn" class="add-btn">Add Tracker</button>
+        <button id="addTrackerBtn" class="btn-custom form">Add Tracker</button>
     </div>
 
     <!-- Tracker Search -->
-    <div id="tracker-search">
-        <input type="text" id="trackerIdInput" placeholder="Enter Tracker ID">
-        <button id="searchTrackerBtn" class="refresh-btn">Search / Refresh</button>
+    <div id="tracker-search" class="d-flex justify-content-center align-items-center flex-wrap gap-2"></div>>
+        <input type="text"id="trackerIdInput" class="btn-custom-sm btn-custom-outline-primary" placeholder="Enter Tracker ID" style="min-width: 200px;">
+        <button id="searchTrackerBtn" class="btn-custom btn-custom-sm btn-custom-outline-primary"> Search / Refresh</button>
     </div>
 
     <!-- Devices Table -->
@@ -116,21 +156,43 @@
         <table id="device-table">
             <thead>
                 <tr>
-                    <th>Device ID</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Speed</th>
-                    <th>Distance</th>
-                    <th>Behavior</th>
-                    <th>Created At</th> 
-                </tr>
-            </thead>
-            <tbody id="device-table-body">
-                <!-- Rows will be added dynamically -->
-            </tbody>
-        </table>
-    </div>
+                <th>
+                    <span class="table-header-full">Device ID</span>
+                    <span class="table-header-mobile">ID</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Latitude</span>
+                    <span class="table-header-mobile">Lat</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Longitude</span>
+                    <span class="table-header-mobile">Lng</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Speed</span>
+                    <span class="table-header-mobile">Spd</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Distance</span>
+                    <span class="table-header-mobile">Dist</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Behavior</span>
+                    <span class="table-header-mobile">Behav</span>
+                </th>
+                <th>
+                    <span class="table-header-full">Created At</span>
+                    <span class="table-header-mobile">Time</span>
+                </th> 
+            </tr>
+        </thead>
+        <tbody id="device-table-body">
+            <!-- Rows will be added dynamically -->
+        </tbody>
+    </table>
 </div>
+
+</div> 
 
 <!-- REPORT -->
 <div id="report-section" class="section">
