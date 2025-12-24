@@ -225,7 +225,7 @@ def get_tracker_chart(device_id: str, date: str, db: Session = Depends(get_db)):
                .order_by(TrackerData.timestamp.asc()).all()
 
     timeLabels = [p.timestamp.strftime("%H:%M") for p in points]
-    behaviorValues = [int(p.behavior) for p in points]  # make sure it's integer
+    behaviorValues = [p.behavior for p in points]  # make sure it's integer
     pieValues = [
         len([v for v in behaviorValues if v == 0]),
         len([v for v in behaviorValues if v == 1]),
