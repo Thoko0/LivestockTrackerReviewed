@@ -467,6 +467,11 @@ updateTotalDistance(pathData);
 function switchTracker(n) {
     const t = trackers[n];
 
+    if (!t) {
+        console.warn("Tracker not found:", n);
+        return; // stop execution to avoid error
+    }
+
     lineChart.data.labels = t.timeLabels;
     lineChart.data.datasets[0].data = t.behaviorValues;
     lineChart.data.datasets[0].pointBackgroundColor = t.behaviorValues.map(v => behaviorColors[v]);
