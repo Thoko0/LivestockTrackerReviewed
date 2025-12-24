@@ -461,28 +461,34 @@ async function switchTracker(deviceId, date) {
         // Fetch chart data from backend
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
         const tracker = await response.json();
+
         console.log("Fetching data for device:", deviceId, "on date:", date);
+
+        // Update chart title
         document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
+
+        // <-- Add this line to actually update the charts
+        updateCharts(tracker);
 
     } catch (err) {
         console.error("Failed to fetch chart data:", err);
     }
 }
 
-        // Update line chart
+// Update line chart
 function updateCharts(tracker) {
     const labels = tracker.timeLabels || [];
     const values = tracker.behaviorValues || [];
     const pie = tracker.pieValues || [];
 
     // Update line chart
-    lineChart.data.labels = tracker.timeLabels || [];
-    lineChart.data.datasets[0].data = tracker.behaviorValues || [];
-    lineChart.data.datasets[0].pointBackgroundColor = (tracker.behaviorValues || []).map(v => behaviorColors[v] || "gray");
+    lineChart.data.labels = labels;
+    lineChart.data.datasets[0].data = values;
+    lineChart.data.datasets[0].pointBackgroundColor = values.map(v => behaviorColors[v] || "gray");
     lineChart.update();
 
     // Update pie chart
-    pieChart.data.datasets[0].data = tracker.pieValues || [];
+    pieChart.data.datasets[0].data = pie;
     pieChart.update();
 }
 
