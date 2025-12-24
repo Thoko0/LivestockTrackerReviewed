@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import desc
 
 from database import SessionLocal, engine
@@ -192,4 +192,27 @@ def create_test_user():
     db.close()
 
 create_test_user()
+#-----------------------------
+# Polyline endpoint
+#-----------------------------
+@app.get("/trackers/{tracker_id}/path")
+def get_daily_path(tracker_id: str, date: str, db: Session = Depends(get_db)):
+    start = datetime.strptime(date, "%Y-%m-%d")
+    end = start + timedelta(days=1)
+
+    points = (
+        db.query(TrackerData)
+        .filter(
+            TrackerData.tracker_id == tracker_id,
+            TrackerData.timestamp >= start,
+            TrackerData.timestamp < end
+        )
+        .order_by(TrackerData.timestamp.asc())
+        .all()
+    )
+
+    return [
+        {"lat": p.lat, "lng": p.lon, "timestamp": p.timestamp}
+        for p in points
+    ]
 
