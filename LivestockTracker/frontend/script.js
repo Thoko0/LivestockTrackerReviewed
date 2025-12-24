@@ -27,16 +27,66 @@ function initMap() {
 function initMapCard() {
 
     // Initialize mini-map in the card container
-    map = L.map("mapCard", {
-        zoomControlOptions: {
+    minimap = L.map("mapCard", {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        dragging: false,
         position: 'topright'
-        }
-    }).setView([51.505, -0.09], 13);
+    }).setView([0, 0], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
-        maxZoom: 18,
-    }).addTo(map);
+        maxZoom: 18
+    }).addTo(minimap);
+
+    async function loadDailyPath(trackerId, date) {
+    try {
+        const response = await fetch(
+            `http://livestocktrackerwebapp.onrender.com/tracker_data/${trackerId}/path?date=${date}`
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch path data");
+
+        const pathData = await response.json();
+        drawPathOnMiniMap(pathData);
+
+    } catch (err) {
+        console.error(err);
+        alert("Error loading path data");
+    }
+    }
+
+    // Draw polyline on the minimap
+    function drawPathOnMiniMap(pathData) {
+        if(!pathData || pathData.length === 0) {
+            alert("No GPS points for this day");
+            return;
+        }
+
+        initMiniMap(pathData[0].latitude, pathData[0].longitude);
+
+        // Remove previous polyline if exists
+        if (pathLine) {
+            miniMap.removeLayer(pathLine);
+        }
+
+        const latLngs = pathData.map(p => [p.latitude, p.longitude]);
+
+        pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(miniMap);
+
+        // Fit map to path bounds
+        miniMap.fitBounds(pathLine.getBounds());
+
+        // Optional: Start & End markers
+        L.marker(latLngs[0]).addTo(miniMap).bindPopup("Start");
+        L.marker(latLngs[latLngs.length - 1]).addTo(miniMap).bindPopup("End");
+    }
+
+    // Event listener for button
+    document.getElementById("showPathBtn").addEventListener("click", () => {
+        const trackerId = document.getElementById("trackerSelect").value;
+        const date = document.getElementById("dateSelect").value;
+        loadDailyPath(trackerId, date);
+    });
 
 }
 
