@@ -195,7 +195,7 @@ create_test_user()
 #-----------------------------
 # Polyline endpoint
 #-----------------------------
-@app.get("/trackers/{tracker_id}/path")
+@app.get("/tracker_data/{tracker_id}/path")
 def get_daily_path(tracker_id: str, date: str, db: Session = Depends(get_db)):
     start = datetime.strptime(date, "%Y-%m-%d")
     end = start + timedelta(days=1)
@@ -203,7 +203,7 @@ def get_daily_path(tracker_id: str, date: str, db: Session = Depends(get_db)):
     points = (
         db.query(TrackerData)
         .filter(
-            TrackerData.tracker_id == tracker_id,
+            TrackerData.device_id == tracker_id,
             TrackerData.timestamp >= start,
             TrackerData.timestamp < end
         )
