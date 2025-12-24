@@ -131,21 +131,30 @@ async function showAllTrackers() {
         const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/map');
         if (!response.ok) throw new Error("Failed to fetch trackers");
 
-        const trackers = await response.json();
+        const allTrackers = await response.json();
 
         // Remove existing markers
         trackerMarkers.forEach(m => map.removeLayer(m));
         trackerMarkers = [];
 
-        if (!trackers || trackers.length === 0) {
+        if (!allTrackers || allTrackers.length === 0) {
             console.log("No trackers found");
             return;
         }
 
+        // Pick only the latest record per device
+        const latestTrackersMap = {};
+        allTrackers.forEach(tracker => {
+            const id = tracker.device_id;
+            if (!latestTrackersMap[id] || new Date(tracker.timestamp) > new Date(latestTrackersMap[id].timestamp)) {
+                latestTrackersMap[id] = tracker;
+            }
+        });
+
         const bounds = [];
 
-        // Add markers for all trackers
-        trackers.forEach(tracker => {
+        // Add markers for latest trackers only
+        Object.values(latestTrackersMap).forEach(tracker => {
             const lat = Number(tracker.latitude);
             const lon = Number(tracker.longitude);
 
