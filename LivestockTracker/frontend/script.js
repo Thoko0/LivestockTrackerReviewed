@@ -511,7 +511,17 @@ function renderTrackers(trackers) {
         const btn = document.createElement("button");
         btn.className = "btn btn-outline-primary";
         btn.textContent = tracker.name || tracker.id || `Tracker ${index+1}`;
-        btn.onclick = () => switchTracker(tracker.id || index+1);
+        btn.onclick = () => {
+            const selectedDateInput = document.getElementById("dateInput"); // your date picker input
+            let date = selectedDateInput?.value;
+
+            if (!date) {
+                // fallback to today if no date is selected
+                date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            }
+
+            switchTracker(tracker.id || index+1, date);
+        };
         btn.setAttribute("data-bs-dismiss", "modal");
         container.appendChild(btn);
     });
