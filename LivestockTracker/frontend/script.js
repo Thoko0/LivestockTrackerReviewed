@@ -531,19 +531,30 @@ function renderTrackers(trackers) {
     container.innerHTML = "";
 
     trackers.forEach((tracker, index) => {
+        const trackerId = tracker.tracker_id || tracker.id;
+
+        if (!trackerId) {
+            console.error("Invalid tracker object:", tracker);
+            return;
+        }
+
         const btn = document.createElement("button");
         btn.className = "btn btn-outline-primary";
-        btn.textContent = tracker.name || tracker.device_id || `Tracker ${index+1}`;
+        btn.textContent = trackerId;
+
         btn.onclick = () => {
             const selectedDateInput = document.getElementById("dateInput");
-            let date = selectedDateInput?.value || new Date().toISOString().slice(0, 10); // fallback to today
+            const date =
+                selectedDateInput?.value || new Date().toISOString().slice(0, 10);
 
-            // Use device_id instead of id/index
-            switchTracker(tracker.device_id, date);
+            switchTracker(trackerId, date);
         };
+
         btn.setAttribute("data-bs-dismiss", "modal");
         container.appendChild(btn);
     });
+}
+
 
     const searchInput = document.getElementById("trackerSearch");
     if (trackers.length > 5) {
