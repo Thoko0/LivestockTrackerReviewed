@@ -533,7 +533,7 @@ function renderTrackers(trackers) {
     trackers.forEach((tracker, index) => {
         const btn = document.createElement("button");
         btn.className = "btn btn-outline-primary";
-        btn.textContent = tracker.name || tracker.id || `Tracker ${index+1}`;
+        btn.textContent = tracker.name || tracker.device_id || `Tracker ${index+1}`;
         btn.onclick = () => {
             const selectedDateInput = document.getElementById("dateInput");
             let date = selectedDateInput?.value || new Date().toISOString().slice(0, 10); // fallback to today
