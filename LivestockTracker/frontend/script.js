@@ -563,7 +563,6 @@ function renderTrackers(trackers) {
     } else {
         searchInput.style.display = "none";
     }
-}
 
 function filterTrackers(e) {
     const term = e.target.value.toLowerCase();
