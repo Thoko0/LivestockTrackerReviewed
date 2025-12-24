@@ -507,6 +507,21 @@ function updateCharts(tracker) {
     // Update pie chart
     pieChart.data.datasets[0].data = pie;
     pieChart.update();
+
+    //update activity ratio
+    // --- Calculate activity counts ---
+    const counts = { grazing: 0, standing: 0, moving: 0, resting: 0 };
+    values.forEach(b => {
+        switch(b) {
+            case 0: counts.grazing++; break;
+            case 1: counts.standing++; break;
+            case 2: counts.moving++; break;
+            case 3: counts.resting++; break;
+        }
+    });
+
+    // --- Call updateActivityRatio ---
+    updateActivityRatio(counts.grazing, counts.standing, counts.moving, counts.resting);
 }
 
         
