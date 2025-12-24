@@ -212,7 +212,7 @@ def get_daily_path(device_id: str, date: str, db: Session = Depends(get_db)):
     )
 
     return [
-        {"latitude": p.lat, "longitude": p.lon, "timestamp": p.timestamp}
+        {"latitude": p.latitude, "longitude": p.longitude, "timestamp": p.timestamp}
         for p in points
     ]
 
