@@ -210,3 +210,27 @@ def get_daily_path(device_id: str, date: str, db: Session = Depends(get_db)):
         for p in points
     ]
 
+#----------------------------
+#Chart data endpoint
+#----------------------------
+@app.get("/tracker_data/{device_id}/chart")
+def get_tracker_chart(device_id: str, date: str, db: Session = Depends(get_db)):
+    start = datetime.strptime(date, "%Y-%m-%d")
+    end = start + timedelta(days=1)
+
+    points = db.query(TrackerData)\
+               .filter(TrackerData.device_id == device_id,
+                       TrackerData.timestamp >= start,
+                       TrackerData.timestamp < end)\
+               .order_by(TrackerData.timestamp.asc()).all()
+
+    timeLabels = [p.timestamp.strftime("%H:%M") for p in points]
+    behaviorValues = [int(p.behavior) for p in points]  # make sure it's integer
+    pieValues = [
+        len([v for v in behaviorValues if v == 0]),
+        len([v for v in behaviorValues if v == 1]),
+        len([v for v in behaviorValues if v == 2]),
+        len([v for v in behaviorValues if v == 3])
+    ] if behaviorValues else [0, 0, 0, 0]  # fallback in case of empty
+
+    return {"timeLabels": timeLabels, "behaviorValues": behaviorValues, "pieValues": pieValues}

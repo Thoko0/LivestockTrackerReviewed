@@ -38,24 +38,26 @@ function initMapCard() {
         maxZoom: 18
     }).addTo(minimap);
 
-    async function loadDailyPath(trackerId, date) {
+    async function loadDailyPath(deviceId, date) {
     try {
-        const response = await fetch(
-            `http://livestocktrackerwebapp.onrender.com/tracker_data/${trackerId}/path?date=${date}`
-        );
+        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
+        const points = await res.json();
 
-        if (!response.ok) throw new Error("Failed to fetch path data");
+        const pathData = points.map(p => ({ lat: p.latitude, lng: p.longitude }));
 
-        const pathData = await response.json();
-        drawPathOnMiniMap(pathData);
+        // Update total distance
+        updateTotalDistance(pathData);
+
+        // Draw polyline on the map
+        if (window.currentPolyline) map.removeLayer(window.currentPolyline);
+        window.currentPolyline = L.polyline(pathData, { color: 'blue' }).addTo(map);
+        map.fitBounds(window.currentPolyline.getBounds());
 
     } catch (err) {
-        console.error(err);
-        alert("Error loading path data");
+        console.error("Failed to load daily path:", err);
     }
     }
-
-    // Draw polyline on the minimap
+        // Draw polyline on the minimap
     function drawPathOnMiniMap(pathData) {
         if(!pathData || pathData.length === 0) {
             alert("No GPS points for this day");
@@ -83,11 +85,21 @@ function initMapCard() {
 
     // Event listener for button
     document.getElementById("showPathBtn").addEventListener("click", () => {
-        const trackerId = document.getElementById("trackerSelect").value;
-        const date = document.getElementById("dateSelect").value;
-        loadDailyPath(trackerId, date);
-    });
+    const trackerId = document.getElementById("trackerSelect").value;
+    const date = document.getElementById("dateSelect").value;
 
+    // Only proceed if tracker is available
+    if (!availableTrackers.includes(trackerId)) {
+        console.warn("Selected tracker not available:", trackerId);
+        return;
+    }
+
+    // Update charts
+    switchTracker(trackerId, date);
+
+    // Update minimap path
+    loadDailyPath(trackerId, date);
+    });
 }
 
 // ===========================
@@ -302,23 +314,7 @@ async function deleteTracker(deviceId, buttonElement) {
 const behaviorMap = ['Grazing','Standing','Resting','Moving'];
 const behaviorColors = ['#7CC576','#36A2EB','#FFCE56','#FF6384'];
 
-const trackers = {
-    1: {
-        timeLabels: ['19:00','20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00'],
-        behaviorValues: [2,2,1,1,0,0,0,3,3,2,2,1],
-        pieValues: [4,4,3,1]
-    },
-    2: {
-        timeLabels: ['19:00','20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00'],
-        behaviorValues: [1,1,1,0,0,0,0,0,1,2,2,2],
-        pieValues: [5,4,2,1]
-    },
-    3: {
-        timeLabels: ['19:00','20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00'],
-        behaviorValues: [0,0,0,0,0,1,1,2,2,2,3,3],
-        pieValues: [6,3,2,1]
-    }
-};
+const trackers = {}; // Filled from backend with tracker data};
 
 // Initialize line chart
 const lineChart = new Chart(document.getElementById('lineChart'), {
@@ -464,28 +460,27 @@ const pathData = [
 updateTotalDistance(pathData);
 
 // Switch tracker function
-function switchTracker(n) {
-    const t = trackers[n];
+async function switchTracker(deviceId, date) {
+    try {
+        // Fetch chart data from backend
+        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
+        const t = await res.json();
 
-    if (!t) {
-        console.warn("Tracker not found:", n, "Available trackers:", Object.keys(trackers));
-        return;
+        // Update line chart
+        lineChart.data.labels = t.timeLabels || [];
+        lineChart.data.datasets[0].data = t.behaviorValues || [];
+        lineChart.data.datasets[0].pointBackgroundColor = (t.behaviorValues || []).map(v => behaviorColors[v] || "gray");
+        lineChart.update();
+
+        // Update pie chart
+        pieChart.data.datasets[0].data = t.pieValues || [];
+        pieChart.update();
+
+        document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
+
+    } catch (err) {
+        console.error("Failed to fetch chart data:", err);
     }
-
-    // Make sure all arrays exist
-    const labels = t.timeLabels || [];
-    const values = t.behaviorValues || [];
-    const pie = t.pieValues || [];
-
-    lineChart.data.labels = labels;
-    lineChart.data.datasets[0].data = values;
-    lineChart.data.datasets[0].pointBackgroundColor = values.map(v => behaviorColors[v] || "gray");
-    lineChart.update();
-
-    pieChart.data.datasets[0].data = pie;
-    pieChart.update();
-
-    document.getElementById('chartTitle').innerText = 'Tracker ' + n;
 }
 
 // -------------------------------
