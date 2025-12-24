@@ -470,10 +470,10 @@ async function switchTracker(deviceId, date) {
 }
 
         // Update line chart
-function updateCharts(t) {
-    const labels = t.timeLabels || [];
-    const values = t.behaviorValues || [];
-    const pie = t.pieValues || [];
+function updateCharts(tracker) {
+    const labels = tracker.timeLabels || [];
+    const values = tracker.behaviorValues || [];
+    const pie = tracker.pieValues || [];
 
     // Update line chart
     lineChart.data.labels = tracker.timeLabels || [];
