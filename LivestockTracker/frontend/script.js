@@ -592,6 +592,17 @@ async function loadDailyPath(deviceId, date) {
 // DYNAMIC TRACKERS MODAL
 // -------------------------------
 
+// Load trackers when modal opens
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("trackersModal");
+    modal.addEventListener("show.bs.modal", loadTrackers);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMapCard(); // initialize the mini map
+});
+
+
 async function loadTrackers() {
     try {
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/trackers/list`);
@@ -650,12 +661,3 @@ function filterTrackers(e) {
     renderTrackers(filtered);
 }
 
-// Load trackers when modal opens
-document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("trackersModal");
-    modal.addEventListener("show.bs.modal", loadTrackers);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    initMapCard(); // initialize the mini map
-});
