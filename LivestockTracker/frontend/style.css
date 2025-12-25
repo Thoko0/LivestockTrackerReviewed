@@ -592,7 +592,9 @@ tr.new-device {
     }
 
 }
-/* Desktop / default map controls */
+/* =========================
+   Map Controls - Desktop
+   ========================= */
 #mapControls {
     position: fixed;
     bottom: 10px;
@@ -605,34 +607,20 @@ tr.new-device {
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.4);
-    transition: all 0.3s ease; /* smooth transition for position, width, transform, etc. */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    z-index: 1000; /* ensures it sits above the map */
+    transition: all 0.3s ease; /* smooth transition when moving/resizing */
 }
 
-/* Mobile adjustments */
-@media (max-width: 576px) {
-    #maps-section {
-        height: calc(100vh - 70px) !important;
-        width: 100vw !important;
-        position: relative !important;
-        top: 0;
-        left: 0;
-        padding: 0 !important;
-        margin: 0 !important;
-        z-index: 1;
-    }
+#mapControls input,
+#mapControls button {
+    margin: 0;
+}
 
-    #maps-section #map {
-        height: 100% !important;
-        width: 100% !important;
-        position: absolute !important;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    /* Adjust map controls for mobile */
+/* =========================
+   Map Controls - Mobile / Tablet
+   ========================= */
+@media (max-width: 768px) {
     #mapControls {
         left: 50%; /* center horizontally */
         transform: translateX(-50%);
@@ -642,11 +630,12 @@ tr.new-device {
         flex-direction: column; /* stack vertically */
         align-items: stretch;
         padding: 10px;
+        gap: 8px; /* vertical gap between buttons */
     }
 
     #mapControls input,
     #mapControls button {
-        width: 100%;
+        width: 100%; /* full width buttons */
         min-width: 0;
         margin-right: 0;
         margin-bottom: 8px;
@@ -656,3 +645,6 @@ tr.new-device {
         margin-bottom: 0;
     }
 }
+/* =========================
+   End of File
+   ========================= */
