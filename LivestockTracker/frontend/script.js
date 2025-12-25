@@ -336,6 +336,11 @@ async function deleteTracker(deviceId, buttonElement) {
         alert(err.message);
     }
 }
+
+// ===========================
+// CHARTS INITIALIZATION & UPDATING
+// ===========================
+
 // Chart.js initialization
 const behaviorMap = ['Grazing','Standing','Resting','Moving'];
 const behaviorColors = ['#7CC576','#36A2EB','#FFCE56','#FF6384'];
@@ -481,26 +486,6 @@ const pathData = [];
 
 updateTotalDistance(pathData);
 
-// Switch tracker function
-async function switchTracker(deviceId, date) {
-    try {
-        // Fetch chart data from backend
-        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
-        const tracker = await response.json();
-
-        console.log("Fetching data for device:", deviceId, "on date:", date);
-
-        // Update chart title
-        document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
-
-        // <-- Add this line to actually update the charts
-        updateCharts(tracker);
-
-    } catch (err) {
-        console.error("Failed to fetch chart data:", err);
-    }
-}
-
 // Update line chart
 function updateCharts(tracker) {
     const labels = tracker.timeLabels || [];
@@ -533,7 +518,26 @@ function updateCharts(tracker) {
     updateActivityRatio(counts.grazing, counts.standing, counts.moving, counts.resting);
 }
 
-        
+// Switch tracker function
+async function switchTracker(deviceId, date) {
+    try {
+        // Fetch chart data from backend
+        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
+        const tracker = await response.json();
+
+        console.log("Fetching data for device:", deviceId, "on date:", date);
+
+        // Update chart title
+        document.getElementById('chartTitle').innerText = 'Tracker ' + deviceId;
+
+        // Update the charts
+        updateCharts(tracker);
+
+    } catch (err) {
+        console.error("Failed to fetch chart data:", err);
+    }
+}
+     
 
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
