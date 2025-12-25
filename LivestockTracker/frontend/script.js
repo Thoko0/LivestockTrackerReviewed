@@ -520,9 +520,17 @@ function updateCharts(tracker) {
     updateActivityRatio(counts.grazing, counts.standing, counts.moving, counts.resting);
 }
 
-// Switch tracker function
+// Switch tracker function (simplified, auto-picks date if empty)
 async function switchTracker(deviceId, date) {
     try {
+        // If no date provided, get the first available timestamp for the tracker
+        if (!date) {
+            const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}`);
+            const data = await res.json();
+            date = data.timestamp ? new Date(data.timestamp).toISOString().slice(0, 10) 
+                                  : new Date().toISOString().slice(0, 10);
+        }
+
         // Fetch chart data from backend
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
         const tracker = await response.json();
@@ -534,6 +542,7 @@ async function switchTracker(deviceId, date) {
 
         // Update the charts
         updateCharts(tracker);
+
         // Update total distance
         fetchDailyDistance(deviceId, date);                                
 
@@ -541,6 +550,7 @@ async function switchTracker(deviceId, date) {
         console.error("Failed to fetch chart data:", err);
     }
 }
+
 
 // ===========================
 // MINIMAP INITIALIZATION 
@@ -592,16 +602,6 @@ async function loadDailyPath(deviceId, date) {
 // DYNAMIC TRACKERS MODAL
 // -------------------------------
 
-// Load trackers when modal opens
-document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("trackersModal");
-    modal.addEventListener("show.bs.modal", loadTrackers);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    initMapCard(); // initialize the mini map
-});
-
 
 async function loadTrackers() {
     try {
@@ -635,7 +635,7 @@ function renderTrackers(trackers) {
             const date =
                 selectedDateInput?.value || new Date().toISOString().slice(0, 10);
 
-            switchTracker("test_002", "2025-12-22");
+            switchTracker(trackerId, date); // Updates charts
             loadDailyPath(trackerId, date);   // Updates mini map path
 
             btn.setAttribute("data-bs-dismiss", "modal");
@@ -661,3 +661,12 @@ function filterTrackers(e) {
     renderTrackers(filtered);
 }
 
+// Load trackers when modal opens
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("trackersModal");
+    modal.addEventListener("show.bs.modal", loadTrackers);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMapCard(); // initialize the mini map
+});
