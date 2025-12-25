@@ -2,8 +2,9 @@
 // CONFIG
 // ===========================
 const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
+
 // ===========================
-// MAP VARIABLES
+// CONFIG-VARIABLES
 // ===========================
 let map;
 let miniMap;
@@ -19,6 +20,43 @@ function ensureMapReady() {
 }
 
 // ===========================
+// MOBILE MENU
+// ===========================
+document.getElementById("hamburger").addEventListener("click", () => {
+    tabs.forEach(tab => tab.classList.toggle("show"));
+});
+
+// ===========================
+// TAB SWITCHING
+// ===========================
+const tabs = document.querySelectorAll(".tab");
+const sections = document.querySelectorAll(".section");
+
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        sections.forEach(s => s.classList.remove("active"));
+
+        tab.classList.add("active");
+        document.getElementById(tab.id.replace("-tab", "-section")).classList.add("active");
+
+        if (tab.id === "maps-tab" && !map) {
+            initMap();
+            setTimeout(() => map.invalidateSize(), 200);
+        }
+        if (tab.id === "charts-tab") {
+            initMapCard();
+        }
+    });
+});
+
+// ****************************
+// MAPS TAB CONFIGURATION SETTINGS
+// ****************************
+
+
+
+// ===========================
 // MAP INITIALIZATION
 // ===========================
 function initMap() {
@@ -29,94 +67,11 @@ function initMap() {
     }).addTo(map);
 }
 
-// ===========================
-// MAP INITIALIZATION (for mini-map in card)
-// ===========================
-function initMapCard() {
-
-    // Initialize mini-map in the card container
-    minimap = L.map("mapCard", {
-        zoomControl: false,
-        scrollWheelZoom: false,
-        dragging: false,
-        position: 'topright'
-    }).setView([0, 0], 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18
-    }).addTo(minimap);
-
-    async function loadDailyPath(deviceId, date) {
-    try {
-
-        ensureMapReady(); 
-        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
-        const points = await res.json();
-
-        const pathData = points.map(p => ({ lat: p.latitude, lng: p.longitude }));
-
-        // Update total distance
-        updateTotalDistance(pathData);
-
-        // Draw polyline on the map
-        if (window.currentPolyline) map.removeLayer(window.currentPolyline);
-        window.currentPolyline = L.polyline(pathData, { color: 'blue' }).addTo(map);
-        map.fitBounds(window.currentPolyline.getBounds());
-
-    } catch (err) {
-        console.error("Failed to load daily path:", err);
-    }
-    }
-        // Draw polyline on the minimap
-    function drawPathOnMiniMap(pathData) {
-        if(!pathData || pathData.length === 0) {
-            alert("No GPS points for this day");
-            return;
-        }
-
-        initMiniMap(pathData[0].latitude, pathData[0].longitude);
-
-        // Remove previous polyline if exists
-        if (pathLine) {
-            miniMap.removeLayer(pathLine);
-        }
-
-        const latLngs = pathData.map(p => [p.latitude, p.longitude]);
-
-        pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(miniMap);
-
-        // Fit map to path bounds
-        miniMap.fitBounds(pathLine.getBounds());
-
-        // Optional: Start & End markers
-        L.marker(latLngs[0]).addTo(miniMap).bindPopup("Start");
-        L.marker(latLngs[latLngs.length - 1]).addTo(miniMap).bindPopup("End");
-    }
-
-    // Event listener for button
-    document.getElementById("showPathBtn").addEventListener("click", () => {
-    const trackerId = document.getElementById("trackerSelect").value;
-    const date = document.getElementById("dateSelect").value;
-
-    // Only proceed if tracker is available
-    const exists = availableTrackers.some(t => t.device_id === trackerId);
-    if (!exists) {
-        console.warn("Selected tracker not available:", trackerId);
-        return;
-    }
-
-    // Update charts
-    switchTracker(trackerId, date);
-
-    // Update minimap path
-    loadDailyPath(trackerId, date);
-    });
-}
 
 // ===========================
 // SHOW ALL TRACKERS ON MAP
 // ===========================
-// Attach to button
+// Attach setting to button
 document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("showAllTrackersBtn")
@@ -182,6 +137,8 @@ async function showAllTrackers() {
 // ===========================
 // MAP SEARCH (LOCATE TRACKER)
 // ===========================
+
+//attach setting to button
 document
     .getElementById("mapSearchBtn")
     .addEventListener("click", locateTrackerOnMap);
@@ -219,53 +176,12 @@ async function locateTrackerOnMap() {
     }
 }
 
-// ===========================
-// FIND TRACKER FROM DEVICES → MAP
-// ===========================
-function findOnMap(trackerId) {
-    // 1. Switch to Maps tab
-    document.getElementById("maps-tab").click();
-
-    // 2. Fill the map search input
-    document.getElementById("mapTrackerIdInput").value = trackerId;
-
-    // 3. Ensure map is ready, then locate
-    setTimeout(() => {
-        locateTrackerOnMap();
-    }, 300);
-}
+//****************************
+//DEVICES TAB
+//****************************
 
 // ===========================
-// TAB SWITCHING
-// ===========================
-const tabs = document.querySelectorAll(".tab");
-const sections = document.querySelectorAll(".section");
-
-tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        sections.forEach(s => s.classList.remove("active"));
-
-        tab.classList.add("active");
-        document.getElementById(tab.id.replace("-tab", "-section")).classList.add("active");
-
-        if (tab.id === "maps-tab" && !map) {
-            initMap();
-            setTimeout(() => map.invalidateSize(), 200);
-        }
-    });
-});
-
-// ===========================
-// MOBILE MENU
-// ===========================
-document.getElementById("hamburger").addEventListener("click", () => {
-    tabs.forEach(tab => tab.classList.toggle("show"));
-});
-
-
-// ===========================
-// ADD TRACKER
+// ADD TRACKER BUTTON SETTING
 // ===========================
 document.getElementById("addTrackerBtn").addEventListener("click", addTracker);
 
@@ -289,6 +205,28 @@ async function addTracker() {
         document.getElementById("newTrackerId").value = "";
         document.getElementById("newTrackerName").value = "";
 
+        addOrUpdateTableRow(data);
+
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
+// ===========================
+// SEARCH TRACKER BUTTON SETTING
+// ===========================
+document
+    .getElementById("searchTrackerBtn")
+    .addEventListener("click", searchTracker);
+async function searchTracker() {
+    const deviceId = document.getElementById("searchTrackerId").value.trim();
+    if (!deviceId) return alert("Enter a tracker ID to search");
+
+    try {
+        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(deviceId)}`);
+        if (!response.ok) throw new Error("Tracker not found");
+
+        const data = await response.json();
         addOrUpdateTableRow(data);
 
     } catch (err) {
@@ -336,6 +274,29 @@ async function deleteTracker(deviceId, buttonElement) {
         alert(err.message);
     }
 }
+
+// ===========================
+// FIND TRACKER FROM DEVICES → MAP
+// ===========================
+function findOnMap(trackerId) {
+    // 1. Switch to Maps tab
+    document.getElementById("maps-tab").click();
+
+    // 2. Fill the map search input
+    document.getElementById("mapTrackerIdInput").value = trackerId;
+
+    // 3. Ensure map is ready, then locate
+    setTimeout(() => {
+        locateTrackerOnMap();
+    }, 300);
+}
+
+
+
+
+
+
+
 
 // ===========================
 // CHARTS INITIALIZATION & UPDATING
@@ -537,7 +498,91 @@ async function switchTracker(deviceId, date) {
         console.error("Failed to fetch chart data:", err);
     }
 }
-     
+
+// ===========================
+// MINIMAP INITIALIZATION 
+// ===========================
+function initMapCard() {
+
+    // Initialize mini-map in the card container
+    minimap = L.map("mapCard", {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        dragging: false,
+        position: 'topright'
+    }).setView([0, 0], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18
+    }).addTo(minimap);
+
+    async function loadDailyPath(deviceId, date) {
+    try {
+
+        ensureMapReady(); 
+        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
+        const points = await res.json();
+
+        const pathData = points.map(p => ({ lat: p.latitude, lng: p.longitude }));
+
+        // Update total distance
+        updateTotalDistance(pathData);
+
+        // Draw polyline on the map
+        if (window.currentPolyline) map.removeLayer(window.currentPolyline);
+        window.currentPolyline = L.polyline(pathData, { color: 'blue' }).addTo(map);
+        map.fitBounds(window.currentPolyline.getBounds());
+
+    } catch (err) {
+        console.error("Failed to load daily path:", err);
+    }
+    }
+        // Draw polyline on the minimap
+    function drawPathOnMiniMap(pathData) {
+        if(!pathData || pathData.length === 0) {
+            alert("No GPS points for this day");
+            return;
+        }
+
+        initMiniMap(pathData[0].latitude, pathData[0].longitude);
+
+        // Remove previous polyline if exists
+        if (pathLine) {
+            miniMap.removeLayer(pathLine);
+        }
+
+        const latLngs = pathData.map(p => [p.latitude, p.longitude]);
+
+        pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(miniMap);
+
+        // Fit map to path bounds
+        miniMap.fitBounds(pathLine.getBounds());
+
+        // Optional: Start & End markers
+        L.marker(latLngs[0]).addTo(miniMap).bindPopup("Start");
+        L.marker(latLngs[latLngs.length - 1]).addTo(miniMap).bindPopup("End");
+    }
+
+    // Event listener for button
+    document.getElementById("showPathBtn").addEventListener("click", () => {
+    const trackerId = document.getElementById("trackerSelect").value;
+    const date = document.getElementById("dateSelect").value;
+
+    // Only proceed if tracker is available
+    const exists = availableTrackers.some(t => t.device_id === trackerId);
+    if (!exists) {
+        console.warn("Selected tracker not available:", trackerId);
+        return;
+    }
+
+    // Update charts
+    switchTracker(trackerId, date);
+
+    // Update minimap path
+    loadDailyPath(trackerId, date);
+    });
+}
+
 
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
