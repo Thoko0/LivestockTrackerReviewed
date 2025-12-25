@@ -7,7 +7,7 @@ const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
 // CONFIG-VARIABLES
 // ===========================
 let map;
-let miniMap;
+let minimap;
 let pathLine;
 let trackerMarker = null;
 let availableTrackers = []; // filled from backend
@@ -546,85 +546,64 @@ async function switchTracker(deviceId, date) {
 // MINIMAP INITIALIZATION 
 // ===========================
 function initMapCard() {
-
-    // Initialize mini-map in the card container
     minimap = L.map("mapCard", {
         zoomControl: false,
         scrollWheelZoom: false,
-        dragging: false,
-        position: 'topright'
+        dragging: false
     }).setView([0, 0], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18
     }).addTo(minimap);
 
-    async function loadDailyPath(deviceId, date) {
-    try {
+    document.getElementById("showPathBtn").addEventListener("click", () => {
+        const trackerId = document.getElementById("trackerSelect").value;
+        const date = document.getElementById("dateSelect").value || new Date().toISOString().slice(0, 10);
 
-        ensureMapReady(); 
+        if (!availableTrackers.some(t => t.device_id === trackerId)) {
+            console.warn("Selected tracker not available:", trackerId);
+            return;
+        }
+
+        // Update charts
+        switchTracker(trackerId, date);
+
+        // Update mini-map path
+        loadDailyPath(trackerId, date);
+    });
+}
+
+async function loadDailyPath(deviceId, date) {
+    try {
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
         const points = await res.json();
 
-        const pathData = points.map(p => ({ lat: p.latitude, lng: p.longitude }));
+        if (!points || points.length === 0) return;
 
-        // Update total distance
+        const pathData = points.map(p => ({ latitude: p.latitude, longitude: p.longitude }));
         updateTotalDistance(pathData);
 
-        // Draw polyline on the map
-        if (window.currentPolyline) map.removeLayer(window.currentPolyline);
-        window.currentPolyline = L.polyline(pathData, { color: 'blue' }).addTo(map);
-        map.fitBounds(window.currentPolyline.getBounds());
+        // Remove previous polyline
+        if (pathLine) minimap.removeLayer(pathLine);
+
+        const latLngs = pathData.map(p => [p.latitude, p.longitude]);
+        pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(minimap);
+
+        minimap.fitBounds(pathLine.getBounds());
+
+        // Optional start & end markers
+        L.marker(latLngs[0]).addTo(minimap).bindPopup("Start");
+        L.marker(latLngs[latLngs.length - 1]).addTo(minimap).bindPopup("End");
 
     } catch (err) {
         console.error("Failed to load daily path:", err);
     }
-    }
-        // Draw polyline on the minimap
-    function drawPathOnMiniMap(pathData) {
-        if(!pathData || pathData.length === 0) {
-            alert("No GPS points for this day");
-            return;
-        }
-
-        initMiniMap(pathData[0].latitude, pathData[0].longitude);
-
-        // Remove previous polyline if exists
-        if (pathLine) {
-            miniMap.removeLayer(pathLine);
-        }
-
-        const latLngs = pathData.map(p => [p.latitude, p.longitude]);
-
-        pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(miniMap);
-
-        // Fit map to path bounds
-        miniMap.fitBounds(pathLine.getBounds());
-
-        // Optional: Start & End markers
-        L.marker(latLngs[0]).addTo(miniMap).bindPopup("Start");
-        L.marker(latLngs[latLngs.length - 1]).addTo(miniMap).bindPopup("End");
-    }
-
-    // Event listener for button
-    document.getElementById("showPathBtn").addEventListener("click", () => {
-    const trackerId = document.getElementById("trackerSelect").value;
-    const date = document.getElementById("dateSelect").value;
-
-    // Only proceed if tracker is available
-    const exists = availableTrackers.some(t => t.device_id === trackerId);
-    if (!exists) {
-        console.warn("Selected tracker not available:", trackerId);
-        return;
-    }
-
+}
     // Update charts
     switchTracker(trackerId, date);
 
     // Update minimap path
     loadDailyPath(trackerId, date);
-    });
-}
 
 
 // -------------------------------
