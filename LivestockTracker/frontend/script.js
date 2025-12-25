@@ -315,12 +315,6 @@ function findOnMap(trackerId) {
 }
 
 
-
-
-
-
-
-
 // ===========================
 // CHARTS INITIALIZATION & UPDATING
 // ===========================
@@ -451,24 +445,48 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 function updateTotalDistance(gpsPoints) {
     let totalKm = 0;
 
-    for (let i = 0; i < gpsPoints.length - 1; i++) {
-        let p1 = gpsPoints[i];
-        let p2 = gpsPoints[i + 1];
-        
-        totalKm += calculateHaversine(p1.lat, p1.lng, p2.lat, p2.lng);
+    if (!gpsPoints || gpsPoints.length < 2) {
+        document.getElementById('distanceDisplay').innerText = "0.0";
+        document.getElementById('trendIcon').style.display = 'none';
+        return;
     }
 
-    // Update the HTML display
-    document.getElementById('distanceDisplay').innerText = totalKm.toFixed(1);
-    
-    // Hide trend icon if distance is 0
+    for (let i = 0; i < gpsPoints.length - 1; i++) {
+        const p1 = gpsPoints[i];
+        const p2 = gpsPoints[i + 1];
+
+        totalKm += calculateHaversine(
+            p1.latitude,
+            p1.longitude,
+            p2.latitude,
+            p2.longitude
+        );
+    }
+
+    document.getElementById('distanceDisplay').innerText = totalKm.toFixed(2);
     document.getElementById('trendIcon').style.display = totalKm > 0 ? 'inline' : 'none';
 }
 
-// Example data from backend
-const pathData = [];
+async function fetchDailyDistance(deviceId, date) {
+    try {
+        const response = await fetch(
+            `https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`
+        );
 
-updateTotalDistance(pathData);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const gpsPoints = await response.json();
+
+        updateTotalDistance(gpsPoints);
+
+    } catch (error) {
+        console.error("Failed to fetch daily distance:", error);
+    }
+}
+
+
 
 // Update line chart
 function updateCharts(tracker) {
@@ -516,6 +534,8 @@ async function switchTracker(deviceId, date) {
 
         // Update the charts
         updateCharts(tracker);
+        // Update total distance
+        fetchDailyDistance(deviceId, date);                                
 
     } catch (err) {
         console.error("Failed to fetch chart data:", err);
