@@ -556,21 +556,6 @@ function initMapCard() {
         maxZoom: 18
     }).addTo(minimap);
 
-    document.getElementById("showPathBtn").addEventListener("click", () => {
-        const trackerId = document.getElementById("trackerSelect").value;
-        const date = document.getElementById("dateSelect").value || new Date().toISOString().slice(0, 10);
-
-        if (!availableTrackers.some(t => t.device_id === trackerId)) {
-            console.warn("Selected tracker not available:", trackerId);
-            return;
-        }
-
-        // Update charts
-        switchTracker(trackerId, date);
-
-        // Update mini-map path
-        loadDailyPath(trackerId, date);
-    });
 }
 
 
@@ -640,6 +625,9 @@ function renderTrackers(trackers) {
                 selectedDateInput?.value || new Date().toISOString().slice(0, 10);
 
             switchTracker(trackerId, date);
+            loadDailyPath(trackerId, date);   // Updates mini map path
+
+            btn.setAttribute("data-bs-dismiss", "modal");
         };
 
         btn.setAttribute("data-bs-dismiss", "modal");
