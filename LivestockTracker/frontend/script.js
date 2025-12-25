@@ -635,7 +635,7 @@ function renderTrackers(trackers) {
             const date =
                 selectedDateInput?.value || new Date().toISOString().slice(0, 10);
 
-            switchTracker(trackerId, date);
+            switchTracker("test_002", "2025-12-22");
             loadDailyPath(trackerId, date);   // Updates mini map path
 
             btn.setAttribute("data-bs-dismiss", "modal");
