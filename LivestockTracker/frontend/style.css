@@ -597,7 +597,7 @@ tr.new-device {
    ========================= */
 #mapControls {
     position: fixed;
-    bottom: 10px;
+    bottom: 100px;
     left: 10px; /* bottom-left on desktop */
     display: flex;
     flex-direction: row;
