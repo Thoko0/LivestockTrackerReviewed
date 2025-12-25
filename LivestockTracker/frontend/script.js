@@ -219,7 +219,7 @@ document
     .getElementById("searchTrackerBtn")
     .addEventListener("click", searchTracker);
 async function searchTracker() {
-    const deviceId = document.getElementById("tracker-search").value.trim();
+    const deviceId = document.getElementById("trackerIdInput").value.trim();
     if (!deviceId) return alert("Enter a tracker ID to search");
 
     try {
