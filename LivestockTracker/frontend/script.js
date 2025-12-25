@@ -179,6 +179,29 @@ async function locateTrackerOnMap() {
 //****************************
 //DEVICES TAB
 //****************************
+//==========================
+// TABLE ROW MANAGEMENT
+//==========================
+function addOrUpdateTableRow(tracker) {
+    const tableBody = document.getElementById("device-table-body");
+    let row = document.getElementById(`tracker-row-${tracker.device_id}`);
+
+    if (!row) {
+        row = document.createElement("tr");
+        row.id = `tracker-row-${tracker.device_id}`;
+        tableBody.appendChild(row);
+    }
+
+    row.innerHTML = `
+        <td>${tracker.device_id}</td>
+        <td>${tracker.latitude.toFixed(5)}</td>
+        <td>${tracker.longitude.toFixed(5)}</td>
+        <td>${tracker.speed ?? 0}</td>
+        <td>${tracker.behavior ?? "-"}</td>
+        <td>${new Date(tracker.created_at).toLocaleString()}</td>
+    `;
+}                      
+
 
 // ===========================
 // ADD TRACKER BUTTON SETTING
