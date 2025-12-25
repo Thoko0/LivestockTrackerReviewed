@@ -573,6 +573,7 @@ function initMapCard() {
     });
 }
 
+
 async function loadDailyPath(deviceId, date) {
     try {
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
@@ -585,6 +586,8 @@ async function loadDailyPath(deviceId, date) {
 
         // Remove previous polyline
         if (pathLine) minimap.removeLayer(pathLine);
+
+        minimap.invalidateSize();
 
         const latLngs = pathData.map(p => [p.latitude, p.longitude]);
         pathLine = L.polyline(latLngs, { color: "green", weight: 4 }).addTo(minimap);
