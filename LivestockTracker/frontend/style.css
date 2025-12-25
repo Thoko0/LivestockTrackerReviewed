@@ -592,22 +592,36 @@ tr.new-device {
     }
 
 }
-/* MAP MOBILE VIEW ADJUSTMENTS */
-/* Mobile view adjustments */
+/* Desktop / default map controls */
+#mapControls {
+    position: fixed;
+    bottom: 10px;
+    left: 10px; /* bottom-left on desktop */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.4);
+    transition: all 0.3s ease; /* smooth transition for position, width, transform, etc. */
+}
+
+/* Mobile adjustments */
 @media (max-width: 576px) {
-    /* Make map section fill remaining space below nav */
     #maps-section {
-        height: calc(100vh - 70px) !important; /* Subtract nav bar height */
+        height: calc(100vh - 70px) !important;
         width: 100vw !important;
-        position: relative !important; /* Change from fixed to relative */
+        position: relative !important;
         top: 0;
         left: 0;
         padding: 0 !important;
         margin: 0 !important;
         z-index: 1;
     }
-    
-    /* Make map itself fill the container */
+
     #maps-section #map {
         height: 100% !important;
         width: 100% !important;
@@ -617,37 +631,28 @@ tr.new-device {
         right: 0;
         bottom: 0;
     }
-    
+
     /* Adjust map controls for mobile */
     #mapControls {
-        max-width: 90% !important;
-        margin-left: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        bottom: 10px !important;
-        width: 90% !important;
-        padding: 10px !important;
-        background-color: rgba(255, 255, 255, 0.85) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255,255,255,0.4);
+        left: 50%; /* center horizontally */
+        transform: translateX(-50%);
+        bottom: 10px;
+        width: 90%;
+        max-width: 90%;
+        flex-direction: column; /* stack vertically */
+        align-items: stretch;
+        padding: 10px;
     }
-    
-    /* Stack controls vertically on mobile */
-    #mapControls {
-        flex-direction: column !important;
-        align-items: stretch !important;
-    }
-    
+
     #mapControls input,
     #mapControls button {
-        width: 100% !important;
-        min-width: 0 !important;
-        margin-right: 0 !important;
-        margin-bottom: 8px !important;
+        width: 100%;
+        min-width: 0;
+        margin-right: 0;
+        margin-bottom: 8px;
     }
-    
+
     #mapControls button:last-child {
-        margin-bottom: 0 !important;
+        margin-bottom: 0;
     }
 }
