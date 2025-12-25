@@ -599,12 +599,6 @@ async function loadDailyPath(deviceId, date) {
         console.error("Failed to load daily path:", err);
     }
 }
-    // Update charts
-    switchTracker(trackerId, date);
-
-    // Update minimap path
-    loadDailyPath(trackerId, date);
-
 
 // -------------------------------
 // DYNAMIC TRACKERS MODAL
