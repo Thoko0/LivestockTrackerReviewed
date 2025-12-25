@@ -667,3 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("trackersModal");
     modal.addEventListener("show.bs.modal", loadTrackers);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMapCard(); // initialize the mini map
+});
