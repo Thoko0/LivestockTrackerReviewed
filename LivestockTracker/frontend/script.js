@@ -443,28 +443,23 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 
 // Update total distance function
 function updateTotalDistance(gpsPoints) {
-    let totalKm = 0;
-
     if (!gpsPoints || gpsPoints.length < 2) {
         document.getElementById('distanceDisplay').innerText = "0.0";
         document.getElementById('trendIcon').style.display = 'none';
         return;
     }
 
-    // Sort by timestamp to ensure chronological order
-    const sortedPoints = gpsPoints.sort((a, b) => 
-        new Date(a.timestamp) - new Date(b.timestamp)
-    );
+    // Sort by timestamp
+    const sortedPoints = gpsPoints.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-    const startPoint = sortedPoints[0];
-    const endPoint = sortedPoints[sortedPoints.length - 1];
+    let totalKm = 0;
 
-    totalKm = calculateHaversine(
-        startPoint.latitude,
-        startPoint.longitude,
-        endPoint.latitude,
-        endPoint.longitude
-    );
+    for (let i = 0; i < sortedPoints.length - 1; i++) {
+        const p1 = sortedPoints[i];
+        const p2 = sortedPoints[i + 1];
+
+        totalKm += calculateHaversine(p1.latitude, p1.longitude, p2.latitude, p2.longitude);
+    }
 
     document.getElementById('distanceDisplay').innerText = totalKm.toFixed(2);
     document.getElementById('trendIcon').style.display = totalKm > 0 ? 'inline' : 'none';
