@@ -4,9 +4,9 @@ import requests
 import time
 
 # ==================== Configuration ====================
-SERIAL_PORT = 'COM10'       # Replace with your ESP32 COM port
+SERIAL_PORT = 'COM5'       # Replace with your ESP32 COM port
 BAUD = 115200
-SERVER_URL = 'https://livestocktrackerzaf.onrender.com/data'  # FastAPI endpoint
+SERVER_URL = 'https://livestocktrackerwebapp.onrender.com/data'  # FastAPI endpoint
 
 # ==================== Initialize Serial ====================
 try:
