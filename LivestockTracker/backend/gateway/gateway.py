@@ -17,33 +17,40 @@ except serial.SerialException as e:
     exit(1)
 
 # ==================== Main Loop ====================
+buffer = ""
+
 while True:
     try:
-        line = ser.readline().decode('utf-8').strip()
-        if not line:
-            continue
+        # Read all available bytes
+        bytes_read = ser.read(ser.in_waiting or 1)
+        buffer += bytes_read.decode('utf-8', errors='ignore')
 
-        print("RAW:", line)
+        # Process full JSON objects separated by newline
+        while '\n' in buffer:
+            line, buffer = buffer.split('\n', 1)
+            line = line.strip()
+            if not line:
+                continue
 
-        # Parse JSON from ESP32
-        try:
-            data = json.loads(line)
-        except json.JSONDecodeError:
-            print("Parse error: invalid JSON")
-            continue
+            print("RAW:", line)
 
-        # Debug: show parsed values
-        print("Parsed data:", data)
+            # Parse JSON
+            try:
+                data = json.loads(line)
+                print("Parsed data:", data)
+            except json.JSONDecodeError as e:
+                print(f"Parse error: invalid JSON ({e})")
+                continue
 
-        # Send to FastAPI
-        try:
-            response = requests.post(SERVER_URL, json=data, timeout=5)
-            if response.status_code == 200:
-                print("[HTTP] Successfully sent to FastAPI!")
-            else:
-                print(f"[HTTP] Failed → {response.status_code}: {response.text}")
-        except requests.RequestException as e:
-            print(f"[HTTP] Connection error: {e}")
+            # Send to FastAPI
+            try:
+                response = requests.post(SERVER_URL, json=data, timeout=5)
+                if response.status_code == 200:
+                    print("[HTTP] Successfully sent to FastAPI!")
+                else:
+                    print(f"[HTTP] Failed → {response.status_code}: {response.text}")
+            except requests.RequestException as e:
+                print(f"[HTTP] Connection error: {e}")
 
     except KeyboardInterrupt:
         print("\nExiting LoRa gateway...")

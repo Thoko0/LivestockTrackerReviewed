@@ -451,17 +451,20 @@ function updateTotalDistance(gpsPoints) {
         return;
     }
 
-    for (let i = 0; i < gpsPoints.length - 1; i++) {
-        const p1 = gpsPoints[i];
-        const p2 = gpsPoints[i + 1];
+    // Sort by timestamp to ensure chronological order
+    const sortedPoints = gpsPoints.sort((a, b) => 
+        new Date(a.timestamp) - new Date(b.timestamp)
+    );
 
-        totalKm += calculateHaversine(
-            p1.latitude,
-            p1.longitude,
-            p2.latitude,
-            p2.longitude
-        );
-    }
+    const startPoint = sortedPoints[0];
+    const endPoint = sortedPoints[sortedPoints.length - 1];
+
+    totalKm = calculateHaversine(
+        startPoint.latitude,
+        startPoint.longitude,
+        endPoint.latitude,
+        endPoint.longitude
+    );
 
     document.getElementById('distanceDisplay').innerText = totalKm.toFixed(2);
     document.getElementById('trendIcon').style.display = totalKm > 0 ? 'inline' : 'none';
