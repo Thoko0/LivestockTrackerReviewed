@@ -62,11 +62,13 @@ void loop() {
 
 
     String payload = "{";
-    payload += "\"lat\":" + String(gpsData.valid ? gpsData.latitude : 0.0, 6) + ",";
-    payload += "\"lon\":" + String(gpsData.valid ? gpsData.longitude : 0.0, 6) + ",";
-    payload += "\"Speed\":" + String(gpsData.valid ? gpsData.speed : 0.0, 6) + ",";
-    payload += "\"Behavior\":" + String(mpuData.behavior); 
+    payload += "\"device_id\":\"test_001\","; // Example device ID
+    payload += "\"latitude\":" + String(gpsData.valid ? gpsData.latitude : 0.0, 6) + ",";
+    payload += "\"longitude\":" + String(gpsData.valid ? gpsData.longitude : 0.0, 6) + ",";
+    payload += "\"speed\":" + String(gpsData.valid ? gpsData.speed : 0.0, 6) + ",";
+    payload += "\"behavior\":" + String(mpuData.behavior);
     payload += "}";
+
 
     Serial.println(payload);
     LoRa_Send(payload);
