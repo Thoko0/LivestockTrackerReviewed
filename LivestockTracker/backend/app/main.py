@@ -56,6 +56,7 @@ def add_data(data: TrackerDataSchema, db: Session = Depends(get_db)):
         speed=data.speed,
         distance=data.distance,
         behavior=data.behavior,
+        timestamp=data.timestamp or datetime.utcnow()
     )
 
     db.add(record)
