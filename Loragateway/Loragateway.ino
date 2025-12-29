@@ -47,7 +47,7 @@ void loop() {
     }
     rec[counter] = '\0';
 
-    // Print ONLY received data (PySerial friendly)
+    // Print ONLY received data 
     while (Serial.println(rec)){;
     pixel.setPixelColor(0, pixel.Color(255, 0, 0));  // RED
     pixel.show();
