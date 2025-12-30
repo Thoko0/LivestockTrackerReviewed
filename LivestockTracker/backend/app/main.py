@@ -235,3 +235,19 @@ def get_tracker_chart(device_id: str, date: str, db: Session = Depends(get_db)):
     ] if behaviorValues else [0, 0, 0, 0]  # fallback in case of empty
 
     return {"timeLabels": timeLabels, "behaviorValues": behaviorValues, "pieValues": pieValues}
+
+#----------------------------
+# Sound Trigger Endpoint
+#----------------------------
+
+# work on implemntation....TK 
+    @app.post("/tracker/{device_id}/play-sound")
+    def play_sound(device_id: str, db: Session = Depends(get_db)):
+        tracker = db.query(TrackerData).filter(TrackerData.device_id == device_id).first()
+        
+        if not tracker:
+            raise HTTPException(status_code=404, detail="Tracker not found")
+        
+        # TODO: Implement sound playback logic for the tracker 
+        # send the command via lora gateway.
+        return {"status": "sound triggered", "device_id": device_id}

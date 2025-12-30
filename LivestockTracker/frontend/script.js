@@ -297,6 +297,29 @@ async function deleteTracker(deviceId, buttonElement) {
         alert(err.message);
     }
 }
+// ===========================
+// FIND TRACKER BY SOUND
+// ===========================
+document.getElementById("findTrackerBySound").addEventListener("click", findTrackerBySound);
+
+async function findTrackerBySound() {
+    const deviceId = document.getElementById("trackerIdInput").value.trim();
+    if (!deviceId) return alert("Enter a tracker ID");
+
+    try {
+        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${encodeURIComponent(deviceId)}/play-sound`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ device_id: deviceId })
+        });
+
+        if (!response.ok) throw new Error("Failed to send sound command");
+
+        alert(`Sound command sent to tracker "${deviceId}"`);
+    } catch (err) {
+        alert(err.message);
+    }
+}
 
 // ===========================
 // FIND TRACKER FROM DEVICES → MAP
