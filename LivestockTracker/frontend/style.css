@@ -522,7 +522,8 @@ tr.new-device {
 
 .slideshow img {
   position: absolute;
-  height: 100%;
+  height: 400px;
+    width: 100%;
   object-fit: cover;
   opacity: 0;
   animation: slideShow 12s infinite;
@@ -563,7 +564,6 @@ tr.new-device {
   margin: 15px 0 8px;
   color: #0056b3;
 }
-
 /* ABOUT */
 .about {
   text-align: center;
