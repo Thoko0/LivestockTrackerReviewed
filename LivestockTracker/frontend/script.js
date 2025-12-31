@@ -22,12 +22,22 @@ function ensureMapReady() {
 // ===========================
 // MOBILE MENU
 // ===========================
-const hamburger = document.getElementById("hamburger");
-const menuBar = document.getElementById("menu-bar");
+const mobileTabs = document.querySelectorAll('#mobile-nav .tab');
 
-hamburger.addEventListener("click", () => {
-  menuBar.classList.toggle("open");
+mobileTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // remove active from all
+        mobileTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // switch sections
+        const sectionId = tab.title.toLowerCase() + '-section';
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const section = document.getElementById(sectionId);
+        if(section) section.classList.add('active');
+    });
 });
+
 
 // ===========================
 // TAB SWITCHING
