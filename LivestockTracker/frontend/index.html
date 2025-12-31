@@ -19,17 +19,36 @@
     />
 
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <nav id="menu-bar">
     <img src="logo.png" alt="Livestock Tracker Logo" id="logo">
-    <button id="hamburger">☰</button>
 
-    <button id="home-tab" class="tab active">Home</button>
-    <button id="maps-tab" class="tab">Maps</button>
-    <button id="devices-tab" class="tab">Devices</button>
-    <button id="report-tab" class="tab">Report</button>
+    <button id="hamburger">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <button id="home-tab" class="tab active" title="Home">
+        <i class="fa-solid fa-house"></i>
+    </button>
+
+    <button id="maps-tab" class="tab" title="Maps">
+        <i class="fa-solid fa-map-location-dot"></i>
+    </button>
+
+    <button id="devices-tab" class="tab" title="Devices">
+        <i class="fa-solid fa-satellite-dish"></i>
+    </button>
+
+    <button id="report-tab" class="tab" title="Reports">
+        <i class="fa-solid fa-clipboard"></i>
+    </button>
+
+    <div class="version">
+        ZAF Tracker Version<br>1.0.0
+    </div>
 </nav>
 
 <!-- HOME -->

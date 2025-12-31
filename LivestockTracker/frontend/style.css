@@ -49,45 +49,60 @@ body {
 }
 
 #menu-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90px;
+    height: 100vh;
     background-color: #90D5FF;
-    padding: 10px 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    padding: 15px 0;
+    gap: 15px;
+    z-index: 1000;
 }
 
-/* Logo */
 #logo {
-    height: 40px;
-    margin-right: 20px;
+    width: 45px;
+    height: auto;
+    margin-bottom: 10px;
 }
 
 /* Map */
 #map {
     height: 100vh;
-    width: 100vw;
+    width: calc(100vw - 90px);
+    margin-left: 90px;
     border-radius: 8px;
 }
 
 
 /* Tabs */
 .tab {
-    background-color: #90D5FF;
+    background: none;
     color: white;
     border: none;
-    padding: 8px 14px;
+    width: 100%;
+    padding: 15px 0;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
+    font-size: 20px;   /* icon size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tab:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .tab.active {
     background-color: #0D47A1;
 }
-
 .section {
     display: none;
-    height: 100%; /* Makes section fill viewport height */
+    height: 100vh;
+    margin-left: 90px;
 }
 
 .section.active {
