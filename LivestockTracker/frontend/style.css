@@ -664,80 +664,38 @@ tr.new-device {
    End of File
    ========================= */
 
-  /* =========================
-   Mobile Sidebar
-   ========================= */
+   /* Hide sidebar on mobile */
 @media (max-width: 768px) {
 
-  /* Sidebar hidden by default */
   #menu-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 250px; /* adjust width as needed */
     transform: translateX(-100%);
     transition: transform 0.3s ease;
-    z-index: 2000;
-    flex-direction: column;
-    padding-top: 60px; /* give space for hamburger if top */
   }
 
-  /* Sidebar open state */
   #menu-bar.open {
     transform: translateX(0);
   }
 
-  /* Tabs inside sidebar */
-  #menu-bar .tab {
-    display: none;
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 12px 20px;
-    font-size: 18px;
-    color: white;
-  }
-
-  #menu-bar.open .tab {
-    display: flex;
-  }
-
-  /* Hamburger button */
   #hamburger {
     display: flex;
     position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 2500;
+    bottom: 20px;
+    left: 15px;
+    z-index: 2000;
     background-color: #0D47A1;
     color: white;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 22px;
-    cursor: pointer;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 20px;
   }
 
-  /* Overlay behind sidebar */
-  #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 1800;
+  body {
+    margin-left: 0;
   }
 
-  #overlay.active {
-    display: block;
-  }
-
-  /* Adjust main content */
   #map,
   .section {
     margin-left: 0;
     width: 100vw;
-    transition: margin-left 0.3s ease, width 0.3s ease;
   }
 }

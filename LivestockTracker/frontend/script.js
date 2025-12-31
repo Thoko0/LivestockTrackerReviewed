@@ -22,19 +22,11 @@ function ensureMapReady() {
 // ===========================
 // MOBILE MENU
 // ===========================
-const hamburger = document.getElementById('hamburger');
-const menuBar = document.getElementById('menu-bar');
-const overlay = document.getElementById('overlay');
+const hamburger = document.getElementById("hamburger");
+const menuBar = document.getElementById("menu-bar");
 
-hamburger.addEventListener('click', () => {
-    menuBar.classList.toggle('open');
-    overlay.classList.toggle('active');
-});
-
-// Click overlay to close sidebar
-overlay.addEventListener('click', () => {
-    menuBar.classList.remove('open');
-    overlay.classList.remove('active');
+hamburger.addEventListener("click", () => {
+  menuBar.classList.toggle("open");
 });
 
 // ===========================
