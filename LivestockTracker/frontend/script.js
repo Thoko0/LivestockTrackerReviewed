@@ -199,6 +199,11 @@ function addOrUpdateTableRow(tracker) {
         <td>${tracker.speed ?? 0}</td>
         <td>${tracker.behavior ?? "-"}</td>
         <td>${new Date(tracker.created_at).toLocaleString()}</td>
+        <td>
+            <button class="btn btn-sm btn-primary" onclick="refreshTracker('${tracker.device_id}')">Refresh</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteTracker('${tracker.device_id}', this)">Delete</button>
+            <button class="btn btn-sm btn-secondary" onclick="findOnMap('${tracker.device_id}')">Find on Map</button>
+        </td>
     `;
 }                      
 
