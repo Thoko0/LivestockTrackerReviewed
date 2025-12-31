@@ -307,7 +307,7 @@ async function deleteTracker(deviceId, buttonElement) {
 // FIND TRACKER BY SOUND
 // ===========================
 
-async function Playtone(deviceId, buttonElement)  {
+async function Playtone(deviceId)  {
     if(!confirm(`Send sound command to tracker "${deviceId}"?`)) return;
 
     try {
