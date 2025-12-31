@@ -86,7 +86,7 @@ body {
     width: 100%;
     padding: 15px 0;
     cursor: pointer;
-    font-size: 20px;   /* icon size */
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -664,41 +664,38 @@ tr.new-device {
    End of File
    ========================= */
 
-   @media (max-width: 768px) {
+   /* Hide sidebar on mobile */
+@media (max-width: 768px) {
 
-  /* Sidebar becomes hidden by default */
   #menu-bar {
-    width: 70px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
 
-  /* Sidebar shown when active */
   #menu-bar.open {
     transform: translateX(0);
   }
 
-  /* Hamburger visible */
   #hamburger {
-    display: block;
+    display: flex;
     position: fixed;
-    left: 10px;
     bottom: 20px;
+    left: 15px;
     z-index: 2000;
     background-color: #0D47A1;
-    border-radius: 8px;
-    padding: 10px 12px;
     color: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 20px;
   }
 
-  /* Content uses full width */
   body {
     margin-left: 0;
   }
 
   #map,
   .section {
-    width: 100vw;
     margin-left: 0;
+    width: 100vw;
   }
 }
