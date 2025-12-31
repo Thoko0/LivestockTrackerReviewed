@@ -596,7 +596,6 @@ function initMapCard() {
 
 }
 
-// Attach setting to button
 async function loadDailyPath(deviceId, date) {
     try {
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
