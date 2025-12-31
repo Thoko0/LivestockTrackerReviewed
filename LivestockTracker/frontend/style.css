@@ -663,3 +663,42 @@ tr.new-device {
 /* =========================
    End of File
    ========================= */
+
+   @media (max-width: 768px) {
+
+  /* Sidebar becomes hidden by default */
+  #menu-bar {
+    width: 70px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  /* Sidebar shown when active */
+  #menu-bar.open {
+    transform: translateX(0);
+  }
+
+  /* Hamburger visible */
+  #hamburger {
+    display: block;
+    position: fixed;
+    left: 10px;
+    bottom: 20px;
+    z-index: 2000;
+    background-color: #0D47A1;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: white;
+  }
+
+  /* Content uses full width */
+  body {
+    margin-left: 0;
+  }
+
+  #map,
+  .section {
+    width: 100vw;
+    margin-left: 0;
+  }
+}

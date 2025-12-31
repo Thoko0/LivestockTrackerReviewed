@@ -22,8 +22,11 @@ function ensureMapReady() {
 // ===========================
 // MOBILE MENU
 // ===========================
-document.getElementById("hamburger").addEventListener("click", () => {
-    tabs.forEach(tab => tab.classList.toggle("show"));
+const hamburger = document.getElementById("hamburger");
+const menuBar = document.getElementById("menu-bar");
+
+hamburger.addEventListener("click", () => {
+  menuBar.classList.toggle("open");
 });
 
 // ===========================
