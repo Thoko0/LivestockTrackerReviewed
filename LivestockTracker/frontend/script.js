@@ -203,6 +203,7 @@ function addOrUpdateTableRow(tracker) {
             <button class="btn btn-sm btn-primary" onclick="refreshTracker('${tracker.device_id}')">Refresh</button>
             <button class="btn btn-sm btn-danger" onclick="deleteTracker('${tracker.device_id}', this)">Delete</button>
             <button class="btn btn-sm btn-secondary" onclick="findOnMap('${tracker.device_id}')">Find on Map</button>
+            <button class="btn btn-sm btn-tone" onclick="Playtone('${tracker.device_id}', this)">Play Tone</button>
         </td>
     `;
 }                      
@@ -305,14 +306,12 @@ async function deleteTracker(deviceId, buttonElement) {
 // ===========================
 // FIND TRACKER BY SOUND
 // ===========================
-document.getElementById("findTrackerBySound").addEventListener("click", findTrackerBySound);
 
-async function findTrackerBySound() {
-    const deviceId = document.getElementById("trackerIdInput").value.trim();
-    if (!deviceId) return alert("Enter a tracker ID");
+async function Playtone(deviceId, buttonElement)  {
+    if(!confirm(`Send sound command to tracker "${deviceId}"?`)) return;
 
     try {
-        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${encodeURIComponent(deviceId)}/play-sound`, {
+        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(deviceId)}/play-sound`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ device_id: deviceId })
