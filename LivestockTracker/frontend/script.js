@@ -596,7 +596,12 @@ function initMapCard() {
 
 }
 
-
+// Attach setting to button
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .getElementById("showPathBtn")
+        .addEventListener("click", loadDailyPath);
+});
 async function loadDailyPath(deviceId, date) {
     try {
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
