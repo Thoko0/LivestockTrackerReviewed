@@ -516,14 +516,14 @@ tr.new-device {
 .slideshow {
   position: relative;
   height: 400px;
-    width: 100%;
+  width: 100%;
   overflow: hidden;
 }
 
 .slideshow img {
   position: absolute;
   height: 400px;
-    width: 100%;
+  width: 100%;
   object-fit: cover;
   opacity: 0;
   animation: slideShow 12s infinite;
