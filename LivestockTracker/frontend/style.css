@@ -72,7 +72,7 @@ body {
 /* Map */
 #map {
     height: 100vh;
-    width: calc(100vw - 90px);
+    width: 100vw;
     margin-left: 90px;
     border-radius: 8px;
 }
