@@ -675,6 +675,8 @@ tr.new-device {
    ========================= */
 @media (max-width: 768px) {
     #mapControls {
+        /* Move to bottom-center on mobile */
+        position: fixed;
         left: 50%; /* center horizontally */
         transform: translateX(-50%);
         bottom: 10px;
@@ -721,8 +723,10 @@ tr.new-device {
 .mobile-nav .tab {
     background: none;
     border: none;
-    font-size: 1.8rem; /* size of icon */
-    color: #0d6efd;
+    font-size: 20px; /* size of icon */
+    color: white;
+    width: 100%;
+    padding: 15px 0;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -731,13 +735,12 @@ tr.new-device {
 
 /* Active tab */
 .mobile-nav .tab.active {
-    color: #0d6efd;
-    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    background-color: #0D47A1;
 }
 #mobile-logo {
     height: 40px;
+    width: auto;
     margin-right: 10px;
-    justify-content: space-between;
 }
 
 
@@ -747,6 +750,13 @@ tr.new-device {
         display: none;
     }
 }
+/* Hide on mobile */
+@media (max-width: 768px) {
+    #menu-bar {
+        display: none;
+    }
+}
+
 
 /* =========================
    End of File
