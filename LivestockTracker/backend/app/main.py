@@ -1,4 +1,4 @@
-from gateway.gateway import send_tone_command
+from ..gateway.gateway import send_tone_command
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
