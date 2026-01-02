@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+# Add parent folder (backend/) to sys.path so we can import gateway
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+
+
+
 from gateway.gateway import send_tone_command
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
