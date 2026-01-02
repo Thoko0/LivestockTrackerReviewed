@@ -1,10 +1,3 @@
-import sys
-import os
-
-# Add the backend folder to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-
 from backend.gateway.gateway import send_tone_command
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
