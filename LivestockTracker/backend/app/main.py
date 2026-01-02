@@ -24,7 +24,7 @@ app = FastAPI()
 
 
 origins = [
-    "https://livestocktrackerzaf.onrender.com",  # your frontend URL
+    "https://livestocktrackerzaf.onrender.com",  #  frontend URL
     "http://localhost:3000",                     # if testing locally
 ]
 
@@ -104,7 +104,7 @@ def get_latest_data(db: Session = Depends(get_db)):
 # Listing trackers endpoint #
 @app.get("/trackers/list")
 def get_tracker_list(db: Session = Depends(get_db)):
-    # Return distinct device_ids (or you can include names if you have them)
+    # Return distinct device_ids 
     trackers = db.query(TrackerData.device_id).distinct().all()
     return [{"id": t[0]} for t in trackers]  # simple list of trackers
 
