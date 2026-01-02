@@ -5,7 +5,7 @@ from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 
-from database import SessionLocal, engine, get_db
+from database import SessionLocal, engine, Base
 from datetime import datetime
 from models import Base, TrackerData, User, PlayToneCommand
 from schemas import TrackerDataSchema, UserLogin
