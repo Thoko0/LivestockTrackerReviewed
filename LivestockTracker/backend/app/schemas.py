@@ -18,3 +18,7 @@ class TrackerDataSchema(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class PlaySoundRequest(BaseModel):
+    command: str
+    file: str

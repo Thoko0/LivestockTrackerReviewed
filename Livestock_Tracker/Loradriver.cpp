@@ -33,18 +33,27 @@ void LoRa_Send(const String &payload) {
     }
 }
 
-void LoRa_Receive(bool &Tone_trigger) {
+void LoRa_Receive() {
     int packetSize = LoRa.parsePacket();
     if (packetSize) {
         String received = "";
         while (LoRa.available()) {
             received += (char)LoRa.read();
         }
-        Serial1.print("LoRa Packet received:");
-        Serial1.println(received);
 
-        if (received == "TONE") {
-            Tone_trigger = true;
+        Serial.print("LoRa Packet received: ");
+        Serial.println(received);
+
+        // Check for PLAY_WAV command
+        if (received.startsWith("PLAY_WAV,")) {
+            String filename = received.substring(9); // skip "PLAY_WAV,"
+            filename.trim();  // remove whitespace or newline
+
+            Serial.print("Playing WAV file: ");
+            Serial.println(filename);
+
+            set_playback_speed(0.5f);              // optional: same speed
+            play_wav_file(filename.c_str(), pixel); // call your existing function
         }
     }
 }

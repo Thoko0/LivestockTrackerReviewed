@@ -1,3 +1,4 @@
+from LivestockTracker.backend.gateway.gateway import send_tone_command
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -241,13 +242,33 @@ def get_tracker_chart(device_id: str, date: str, db: Session = Depends(get_db)):
 #----------------------------
 
 # work on implemntation....TK 
-    @app.post("/tracker/{device_id}/play-sound")
-    def play_sound(device_id: str, db: Session = Depends(get_db)):
-        tracker = db.query(TrackerData).filter(TrackerData.device_id == device_id).first()
-        
-        if not tracker:
-            raise HTTPException(status_code=404, detail="Tracker not found")
-        
-        # TODO: Implement sound playback logic for the tracker 
-        # send the command via lora gateway.
-        return {"status": "sound triggered", "device_id": device_id}
+@app.post("/tracker_data/{device_id}/play-sound")
+def play_sound(
+    device_id: str,
+    payload: PlaySoundRequest,
+    db: Session = Depends(get_db)
+):
+    tracker = db.query(TrackerData).filter(
+        TrackerData.device_id == device_id
+    ).first()
+
+    if not tracker:
+        raise HTTPException(status_code=404, detail="Tracker not found")
+
+    if payload.command != "PLAY_WAV":
+        raise HTTPException(status_code=400, detail="Invalid command")
+
+    # Build LoRa / serial command
+    command = f"PLAY_WAV,{payload.file}\n"
+
+    # Send to gateway (serial / lora)
+    try:
+        send_tone_command(command)   # use the imported function from gateway
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return {
+        "status": "sound triggered",
+        "device_id": device_id,
+        "file": payload.file
+    }

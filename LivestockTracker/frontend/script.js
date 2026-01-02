@@ -320,23 +320,35 @@ async function deleteTracker(deviceId, buttonElement) {
 // FIND TRACKER BY SOUND
 // ===========================
 
-async function Playtone(deviceId)  {
-    if(!confirm(`Send sound command to tracker "${deviceId}"?`)) return;
+async function playTone(deviceId, soundFile = "beep.wav") {
+    if (!confirm(`Play sound on tracker "${deviceId}"?`)) return;
 
     try {
-        const response = await fetch(`${TRACKER_API}/${encodeURIComponent(deviceId)}/play-sound`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ device_id: deviceId })
-        });
+        const response = await fetch(
+            `${TRACKER_API}/${encodeURIComponent(deviceId)}/play-sound`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    command: "PLAY_WAV",
+                    file: soundFile
+                })
+            }
+        );
 
-        if (!response.ok) throw new Error("Failed to send sound command");
+        const result = await response.json();
 
-        alert(`Sound command sent to tracker "${deviceId}"`);
+        if (!response.ok) {
+            throw new Error(result.error || "Failed to send sound command");
+        }
+
+        alert(`Sound "${soundFile}" sent to tracker "${deviceId}"`);
     } catch (err) {
         alert(err.message);
     }
 }
+
+
 
 // ===========================
 // FIND TRACKER FROM DEVICES → MAP

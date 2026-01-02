@@ -52,13 +52,7 @@ void loop() {
     GPSData_t gpsData = GPS_GetData();
     MPU6050_Data_t mpuData = MPU6050_GetData();
 
-    LoRa_Receive(Tone_trigger);
-
-    if (Tone_trigger) {
-        set_playback_speed(0.5f);
-        play_wav_file("/Kabolala.wav", pixel);
-        Tone_trigger = false;
-    }
+    LoRa_Receive();
 
 
     String payload = "{";

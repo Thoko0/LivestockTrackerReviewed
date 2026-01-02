@@ -9,6 +9,45 @@ int counter = 0;
 #define NUM_PIXELS    1
 
 Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+// ===================== Tone command listener =====================
+const unsigned int max_message_length = 256;
+
+// Function to send PLAY_WAV command over LoRa
+
+void sendPlayWavOverLora(const char* filename) {
+  char loraPayload[64];
+
+  snprintf(loraPayload, sizeof(loraPayload),
+           "PLAY_WAV,%s", filename);
+
+  Serial.print("Forwarding over LoRa: ");
+  Serial.println(loraPayload);
+
+  // Send via LoRa
+  LoRa.beginPacket();
+  LoRa.print(loraPayload);
+  LoRa.endPacket();
+}
+
+void handleCommand(const char* cmd) {
+  Serial.print("Received command: ");
+  Serial.println(cmd);
+
+  // Expect: PLAY_WAV,beep.wav
+  if (strncmp(cmd, "PLAY_WAV", 8) == 0) {
+    const char* comma = strchr(cmd, ',');
+    if (!comma) {
+      Serial.println("Invalid PLAY_WAV format");
+      return;
+    }
+
+    const char* filename = comma + 1;
+    sendPlayWavOverLora(filename);
+  } 
+  else {
+    Serial.println("Unknown command");
+  }
+}
 
 void setup() {
   Serial.begin(115200);
@@ -33,6 +72,7 @@ void setup() {
   LoRa.setSyncWord(0x34);   // must match sender
   LoRa.receive();
   Serial.println("LoRa Gateway ready — listening...");
+
 }
 
 // ===================== Loop =====================
@@ -56,4 +96,26 @@ void loop() {
     pixel.show();
     }
   }
+
+  //tone command listener loop 
+
+  static char message[max_message_length]; //set up character array to store incoming message
+  static unsigned int message_position = 0; //position in the message array: where to store the next incoming byte
+  while (Serial.available() > 0) {
+    char incomingByte = Serial.read(); //read the incoming byte
+    if (incomingByte != '\n') { //if the incoming byte is not a newline character, the message is complete
+      message[message_position] = incomingByte; //store the incoming byte in the message array
+      message_position++; //increment the message position
+      if (message_position >= max_message_length -1 ) { //if the message is too long, reset the position to avoid overflow
+        message_position = 0;
+      }
+    } else {
+      message[message_position] = '\0'; //null-terminate the message
+      handleCommand(message); //call the function to handle the complete message
+      Serial.print("Received command: ");
+      Serial.println(message); //print the received message 
+      message_position = 0; //reset the message position for the next message
+  }
+}
+  // End of tone command listener loop 
 }
