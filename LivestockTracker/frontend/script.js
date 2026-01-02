@@ -320,34 +320,32 @@ async function deleteTracker(deviceId, buttonElement) {
 // FIND TRACKER BY SOUND
 // ===========================
 
-async function playTone(deviceId, soundFile = "beep.wav") {
-    if (!confirm(`Play sound on tracker "${deviceId}"?`)) return;
-
+async function Playtone(deviceId, btn) {
     try {
-        const response = await fetch(
-            `${TRACKER_API}/${encodeURIComponent(deviceId)}/play-sound`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    command: "PLAY_WAV",
-                    file: soundFile
-                })
+        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/devices/${deviceId}/play-tone`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             }
-        );
+        });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(result.error || "Failed to send sound command");
+        if (response.ok) {
+            // optional: give feedback by changing button text temporarily
+            const originalText = btn.textContent;
+            btn.textContent = "Queued!";
+            setTimeout(() => { btn.textContent = originalText; }, 2000);
+
+            console.log(`Command queued for device ${data.device_id}`);
+        } else {
+            alert(`Error: ${data.detail || "Unknown error"}`);
         }
-
-        alert(`Sound "${soundFile}" sent to tracker "${deviceId}"`);
     } catch (err) {
-        alert(err.message);
+        alert("Failed to contact server: " + err);
+        console.error(err);
     }
 }
-
 
 
 // ===========================
