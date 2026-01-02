@@ -7,7 +7,7 @@ from sqlalchemy import desc
 
 from database import SessionLocal, engine
 from models import Base, TrackerData, User
-from schemas import TrackerDataSchema, UserLogin
+from schemas import TrackerDataSchema, UserLogin, PlaySoundRequest
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
