@@ -263,3 +263,25 @@ def play_tone(device_id: str, db: Session = Depends(get_db)):
         "status": "queued",
         "device_id": device_id
     }
+@app.get("/gateway/playtone")
+def get_queued_playtone(db: Session = Depends(get_db)):
+    """
+    Returns the next unsent PLAY_TONE command from DB
+    and marks it as sent immediately.
+    """
+    cmd = (
+        db.query(PlayToneCommand)
+        .filter(PlayToneCommand.sent == False)
+        .order_by(PlayToneCommand.created_at)
+        .first()
+    )
+
+    if cmd:
+        # Mark as sent
+        cmd.sent = True
+        cmd.sent_at = datetime.utcnow()
+        db.commit()
+
+        return {"device_id": cmd.device_id, "command": cmd.command}
+
+    return {}  # no queued commands
