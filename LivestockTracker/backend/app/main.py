@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, timedelta
-from sqlalchemy import desc,=
+from sqlalchemy import desc
 
 from database import SessionLocal, engine, get_db
 from datetime import datetime
