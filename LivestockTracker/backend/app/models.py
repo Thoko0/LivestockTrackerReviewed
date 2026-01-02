@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
 from database import Base
 from datetime import datetime
 
@@ -20,3 +20,13 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)  # plaintext for now, later hash it
+
+class PlayToneCommand(Base):
+    __tablename__ = "playtone_commands"
+
+    id = Column(Integer, primary_key=True, index=True)  # SERIAL in PostgreSQL
+    device_id = Column(String, index=True, nullable=False)
+    command = Column(String, nullable=False)            # e.g. "PLAY_TONE"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    sent = Column(Boolean, default=False)
+    sent_at = Column(DateTime, nullable=True)

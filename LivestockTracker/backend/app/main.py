@@ -1,13 +1,4 @@
-import sys
-from pathlib import Path
 
-# Add parent folder (backend/) to sys.path so we can import gateway
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-
-
-
-from gateway.gateway import send_tone_command
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -15,8 +6,8 @@ from datetime import datetime, timedelta
 from sqlalchemy import desc
 
 from database import SessionLocal, engine
-from models import Base, TrackerData, User
-from schemas import TrackerDataSchema, UserLogin, PlaySoundRequest
+from models import Base, TrackerData, User, PlayToneCommand
+from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -246,38 +237,29 @@ def get_tracker_chart(device_id: str, date: str, db: Session = Depends(get_db)):
 
     return {"timeLabels": timeLabels, "behaviorValues": behaviorValues, "pieValues": pieValues}
 
-#----------------------------
+# ----------------------------
 # Sound Trigger Endpoint
-#----------------------------
+# ----------------------------
 
-# work on implemntation....TK 
-@app.post("/tracker_data/{device_id}/play-sound")
-def play_sound(
-    device_id: str,
-    payload: PlaySoundRequest,
-    db: Session = Depends(get_db)
-):
+@app.post("/devices/{device_id}/play-tone")
+def play_tone(device_id: str, db: Session = Depends(get_db)):
+    # Check if tracker exists
     tracker = db.query(TrackerData).filter(
         TrackerData.device_id == device_id
     ).first()
-
+    
     if not tracker:
         raise HTTPException(status_code=404, detail="Tracker not found")
 
-    if payload.command != "PLAY_WAV":
-        raise HTTPException(status_code=400, detail="Invalid command")
-
-    # Build LoRa / serial command
-    command = f"PLAY_WAV,{payload.file}\n"
-
-    # Send to gateway (serial / lora)
-    try:
-        send_tone_command(command)   # use the imported function from gateway
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Create play tone command
+    cmd = PlayToneCommand(
+        device_id=device_id,
+        command="PLAY_TONE"
+    )
+    db.add(cmd)
+    db.commit()
 
     return {
-        "status": "sound triggered",
-        "device_id": device_id,
-        "file": payload.file
+        "status": "queued",
+        "device_id": device_id
     }

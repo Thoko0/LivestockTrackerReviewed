@@ -52,6 +52,8 @@ while True:
             except requests.RequestException as e:
                 print(f"[HTTP] Connection error: {e}")
 
+            
+
     except KeyboardInterrupt:
         print("\nExiting LoRa gateway...")
         ser.close()
@@ -59,12 +61,5 @@ while True:
     except Exception as e:
         print(f"Unexpected error: {e}")
 
-# Write tone command to serial 
-def send_tone_command(command):
-    try:
-        ser.write((command + '\n').encode('utf-8'))
-        print(f"Sent tone command: {command}")
-    except serial.SerialException as e:
-        print(f"Error sending tone command: {e}")
 
 
