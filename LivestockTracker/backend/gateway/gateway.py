@@ -2,14 +2,17 @@ import serial
 import json
 import requests
 import time
-from gateway_helper import poll_playtone
+from datetime import datetime
+import threading
 
 
 
 # ==================== Configuration ====================
 SERIAL_PORT = 'COM5'       # Replace with your ESP32 COM port
 BAUD = 115200
-SERVER_URL = 'https://livestocktrackerwebapp.onrender.com/data'  # FastAPI endpoint
+SERVER_URL1 = 'https://livestocktrackerwebapp.onrender.com/data'  # FastAPI endpoint
+SERVER_URL2 = 'https://livestocktrackerwebapp.onrender.com/gateway/playtone'
+
 
 # ==================== Initialize Serial ====================
 try:
@@ -20,20 +23,46 @@ except serial.SerialException as e:
     exit(1)
 
 # ==================Initialise writer =================
-GATEWAY_POLL_INTERVAL = 2  # seconds
+def poll_playtone_background(device_id):
+    """
+    Continuously polls the server for playtone commands and
+    sends them to ESP32 over serial. Runs in a separate thread.
+    """
+    while True:
+        try:
+            # Get next command from server
+            r = requests.get(f"{SERVER_URL2}/{device_id}", timeout=10)  # assume server returns next command with device_id
+            if r.status_code != 200:
+                print(f"[DOWNLINK] Failed to fetch command: {r.status_code}")
+                time.sleep(2)
+                continue
 
-def poll_playtone(device_id):
-    try:
-        r = requests.get(f"https://livestocktrackerwebapp.onrender.com/gateway/playtone/{device_id}", timeout=5)
-        data = r.json()
+            data = r.json()
+            if not data or "command" not in data:
+                # No queued command
+                print(f"[DOWNLINK] No queued command for {device_id}")
+                time.sleep(2)
+                continue
 
-        command = data.get("command")
-        if command:
-            ser.write((command + "\n").encode())  # write to serial
-            print(f"[DOWNLINK] Wrote to serial: {command}")
+            command = data.get("command")
 
-    except Exception as e:
-        print(f"[DOWNLINK] Error polling Play Tone: {e}")
+            payload = json.dumps({"device_id": device_id, "command": command})
+            ser.write((payload + "\n").encode())
+            ser.flush()
+            print(f"Wrote to serial: {payload}")
+
+            # Poll interval
+            time.sleep(2)
+
+        except Exception as e:
+            print(f" Error polling Play Tone: {e}")
+            time.sleep(2)
+
+
+# listen for each registered tracker can be stored on a file locally when later deployed for all trackers 
+threading.Thread(target=poll_playtone_background, args=("test_001",), daemon=True).start()
+threading.Thread(target=poll_playtone_background, args=("test_002",), daemon=True).start()
+
 
 # ==================== Main Loop ====================
 buffer = ""
@@ -63,7 +92,7 @@ while True:
 
             # Send to FastAPI
             try:
-                response = requests.post(SERVER_URL, json=data, timeout=5)
+                response = requests.post(SERVER_URL1, json=data, timeout=5)
                 if response.status_code == 200:
                     print("[HTTP] Successfully sent to FastAPI!")
                 else:
@@ -71,11 +100,7 @@ while True:
             except requests.RequestException as e:
                 print(f"[HTTP] Connection error: {e}")
 
-            # Send downlink to gateway ESP32
-                poll_playtone(ser)
-
-                time.sleep(2)
-
+        
             
 
     except KeyboardInterrupt:
