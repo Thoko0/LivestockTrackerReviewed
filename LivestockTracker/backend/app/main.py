@@ -281,8 +281,7 @@ def get_queued_playtone(db: Session = Depends(get_db)):
         # Mark as sent
         cmd.sent = True
         cmd.sent_at = datetime.utcnow()
-        db.commit()
-
+        db.commit() 
         return {"device_id": cmd.device_id, "command": cmd.command}
 
     return {}  # no queued commands
