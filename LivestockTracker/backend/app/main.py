@@ -264,12 +264,13 @@ def play_tone(device_id: str, db: Session = Depends(get_db)):
         "status": "queued",
         "device_id": device_id
     }
-@app.get("/gateway/playtone")
-def get_queued_playtone(db: Session = Depends(get_db)):
+@app.get("/gateway/playtone/{device_id}")
+def get_queued_playtone(device_id: str, db: Session = Depends(get_db)):
     try:
         cmd = (
             db.query(PlayToneCommand)
-            .filter(PlayToneCommand.sent == False)
+            .filter(PlayToneCommand.sent == False, PlayToneCommand.device_id == device_id)
+            .order_by(PlayToneCommand.created_at)
             .first()
         )
 
