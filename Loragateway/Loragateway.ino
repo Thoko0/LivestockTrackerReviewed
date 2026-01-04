@@ -19,7 +19,7 @@ IF data comes from Serial:
 char rec[256];
 int counter = 0;
 // ===================== NeoPixel =====================
-#define NEOPIXEL_PIN  38
+#define NEOPIXEL_PIN  5
 #define NUM_PIXELS    1
 
 Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
