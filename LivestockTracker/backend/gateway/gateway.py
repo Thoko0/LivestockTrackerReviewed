@@ -47,9 +47,9 @@ def poll_playtone_background(device_id):
             command = data.get("command")
 
             payload = json.dumps({"device_id": device_id, "command": command})
-            ser.write((payload + "\n").encode())
+            ser.write((f">{payload}\n").encode())
             ser.flush()
-            print(f"Wrote to serial: {payload}")
+            print(f"[SERIAL →] >{payload}")
 
             # Poll interval
             time.sleep(2)
@@ -81,6 +81,21 @@ while True:
                 continue
 
             print("RAW:", line)
+
+            # ---- START TOKEN LOGIC ----
+            if line.startswith(">"):
+                # This is a command we sent (or serial echo) → ignore
+                print("[SERIAL] Ignored outgoing echo")
+                continue
+
+            if not line.startswith("<"):
+                print("[SERIAL] Unknown message format, skipping")
+                continue
+
+            # Remove '<' token
+            line = line[1:]
+            # ---- END TOKEN LOGIC ----
+
 
             # Parse JSON
             try:

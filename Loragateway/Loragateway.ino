@@ -2,6 +2,20 @@
 #include <LoRa.h>
 #include <Adafruit_NeoPixel.h>
 
+
+/*IF data comes from LoRa:
+    add '<'
+    send to Serial
+    DO NOT send to LoRa
+
+IF data comes from Serial:
+    IF starts with '>':
+        remove '>'
+        send to LoRa
+    ELSE:
+        ignore
+        */
+
 char rec[256];
 int counter = 0;
 // ===================== NeoPixel =====================
@@ -12,42 +26,6 @@ Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 // ===================== Tone command listener =====================
 const unsigned int max_message_length = 256;
 
-// Function to send PLAY_WAV command over LoRa
-
-void sendPlayWavOverLora(const char* filename) {
-  char loraPayload[64];
-
-  snprintf(loraPayload, sizeof(loraPayload),
-           "PLAY_WAV,%s", filename);
-
-  Serial.print("Forwarding over LoRa: ");
-  Serial.println(loraPayload);
-
-  // Send via LoRa
-  LoRa.beginPacket();
-  LoRa.print(loraPayload);
-  LoRa.endPacket();
-}
-
-void handleCommand(const char* cmd) {
-  Serial.print("Received command: ");
-  Serial.println(cmd);
-
-  // Expect: PLAY_WAV,beep.wav
-  if (strncmp(cmd, "PLAY_WAV", 8) == 0) {
-    const char* comma = strchr(cmd, ',');
-    if (!comma) {
-      Serial.println("Invalid PLAY_WAV format");
-      return;
-    }
-
-    const char* filename = comma + 1;
-    sendPlayWavOverLora(filename);
-  } 
-  else {
-    Serial.println("Unknown command");
-  }
-}
 
 void setup() {
   Serial.begin(115200);
@@ -87,14 +65,16 @@ void loop() {
     }
     rec[counter] = '\0';
 
-    // Print ONLY received data 
-    while (Serial.println(rec)){;
-    pixel.setPixelColor(0, pixel.Color(255, 0, 0));  // RED
+    // Print ONLY received data  prefix with a < to indicate its to be sent to db 
+    Serial.print("<");
+    Serial.println(rec);
+
+    pixel.setPixelColor(0, pixel.Color(255, 0, 0)); // RED
     pixel.show();
-    delay(5000);
+    delay(100);
     pixel.clear();
     pixel.show();
-    }
+  }
   }
 
   //tone command listener loop 
@@ -104,18 +84,24 @@ void loop() {
   while (Serial.available() > 0) {
     char incomingByte = Serial.read(); //read the incoming byte
     if (incomingByte != '\n') { //if the incoming byte is not a newline character, the message is complete
-      message[message_position] = incomingByte; //store the incoming byte in the message array
-      message_position++; //increment the message position
+      message[message_position++] = incomingByte; //store the incoming byte in the message array increment the message position
       if (message_position >= max_message_length -1 ) { //if the message is too long, reset the position to avoid overflow
         message_position = 0;
       }
     } else {
       message[message_position] = '\0'; //null-terminate the message
-      handleCommand(message); //call the function to handle the complete message
-      Serial.print("Received command: ");
-      Serial.println(message); //print the received message 
       message_position = 0; //reset the message position for the next message
+      // ONLY forward commands that start with '>'
+    if (message[0] == '>') {
+      // Strip '>'
+      char *cmd = message + 1;
+
+      Serial.print("[GW → LoRa] ");
+      Serial.println(cmd);
+
+      LoRa.beginPacket();
+      LoRa.print(cmd);
+      LoRa.endPacket();
+    }
   }
-}
-  // End of tone command listener loop 
 }
