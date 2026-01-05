@@ -40,7 +40,7 @@ void setup() {
   
   SPI.begin(14, 12, 13);  // SCK, MISO, MOSI
   LoRa.setPins(15, 10, 9);  // CS, RST, DIO0
-  Serial.println("[LoRa] Initializing...");
+  Serial.println("LoRa Initializing...");
 
   if (!LoRa.begin(433E6)) {
     Serial.println("Starting LoRa failed!");
@@ -96,7 +96,7 @@ void loop() {
       // Strip '>'
       char *cmd = message + 1;
 
-      Serial.print("[GW → LoRa] ");
+      Serial.print("gateway to LoRa ");
       Serial.println(cmd);
 
       LoRa.beginPacket();
