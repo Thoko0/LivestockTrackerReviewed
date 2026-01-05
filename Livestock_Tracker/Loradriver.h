@@ -1,5 +1,6 @@
 #ifndef LORADRIVER_H
 #define LORADRIVER_H
+#define THIS_DEVICE_ID "test_002"
 
 #include <SPI.h>
 #include <LoRa.h>

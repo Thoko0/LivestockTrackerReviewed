@@ -1,5 +1,6 @@
 #include "LoRadriver.h"
 
+
 void LoRa_Init() {
     
 
@@ -35,25 +36,48 @@ void LoRa_Send(const String &payload) {
 
 void LoRa_Receive() {
     int packetSize = LoRa.parsePacket();
-    if (packetSize) {
-        String received = "";
-        while (LoRa.available()) {
-            received += (char)LoRa.read();
-        }
+    if (!packetSize) return;
 
-        Serial.print("LoRa Packet received: ");
-        Serial.println(received);
+    String msg = "";
+    while (LoRa.available()) {
+        msg += (char)LoRa.read();
+    }
+    msg.trim();
 
-        // Check for PLAY_WAV command
-        if (received.startsWith("PLAY_WAV,")) {
-            String filename = received.substring(9); // skip "PLAY_WAV,"
-            filename.trim();  // remove whitespace or newline
+    Serial.print("LoRa RX: ");
+    Serial.println(msg);
 
-            Serial.print("Playing WAV file: ");
-            Serial.println(filename);
+    // ---- Extract device_id ----
+    int idKey = msg.indexOf("\"device_id\":\"");
+    if (idKey == -1) return;
 
-            set_playback_speed(0.5f);              // optional: same speed
-            play_wav_file(filename.c_str(), pixel); // call your existing function
-        }
+    int idStart = idKey + 13;
+    int idEnd   = msg.indexOf("\"", idStart);
+    if (idEnd == -1) return;
+
+    String device_id = msg.substring(idStart, idEnd);
+
+    // ---- Extract command ----
+    int cmdKey = msg.indexOf("\"command\":\"");
+    if (cmdKey == -1) return;
+
+    int cmdStart = cmdKey + 11;
+    int cmdEnd   = msg.indexOf("\"", cmdStart);
+    if (cmdEnd == -1) return;
+
+    String command = msg.substring(cmdStart, cmdEnd);
+
+    // ---- Filter device ----
+    if (device_id != THIS_DEVICE_ID) {
+        Serial.println("Not for me, ignoring");
+        return;
+    }
+
+    Serial.print("Accepted command: ");
+    Serial.println(command);
+
+    // ---- Trigger Spiffs playback 
+    if (command == "PLAY_TONE") {
+        trigger_play_tone();   // to SPIFFS logic
     }
 }

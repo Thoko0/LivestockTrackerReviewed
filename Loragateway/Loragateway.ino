@@ -59,7 +59,6 @@ void loop() {
   int packetSize = LoRa.parsePacket();
 
   if (packetSize) {
-    Serial.print("Packet received: ");
     while (LoRa.available() && counter < sizeof(rec) - 1) {
     rec[counter++] = (char)LoRa.read();
     }
@@ -75,14 +74,16 @@ void loop() {
     pixel.clear();
     pixel.show();
   }
-  }
 
   //tone command listener loop 
 
   static char message[max_message_length]; //set up character array to store incoming message
-  static unsigned int message_position = 0; //position in the message array: where to store the next incoming byte
+  static unsigned int message_position = 0;//position in the message array: where to store the next incoming byte
+  
+  
   while (Serial.available() > 0) {
     char incomingByte = Serial.read(); //read the incoming byte
+
     if (incomingByte != '\n') { //if the incoming byte is not a newline character, the message is complete
       message[message_position++] = incomingByte; //store the incoming byte in the message array increment the message position
       if (message_position >= max_message_length -1 ) { //if the message is too long, reset the position to avoid overflow
@@ -91,17 +92,17 @@ void loop() {
     } else {
       message[message_position] = '\0'; //null-terminate the message
       message_position = 0; //reset the message position for the next message
+
+
       // ONLY forward commands that start with '>'
-    if (message[0] == '>') {
-      // Strip '>'
-      char *cmd = message + 1;
+      if (message[0] == '>') {
+        // Strip '>'
+        char *cmd = message + 1;
 
-      Serial.print("gateway to LoRa ");
-      Serial.println(cmd);
-
-      LoRa.beginPacket();
-      LoRa.print(cmd);
-      LoRa.endPacket();
+        LoRa.beginPacket();
+        LoRa.print(cmd);
+        LoRa.endPacket();
+      }
     }
   }
 }
