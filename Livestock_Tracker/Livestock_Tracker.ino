@@ -13,6 +13,9 @@ Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 // ==================== Tone Trigger ====================
 bool Tone_trigger = false;
 
+
+
+
 // ==================== Setup ====================
 void setup() {
     Serial.begin(115200);

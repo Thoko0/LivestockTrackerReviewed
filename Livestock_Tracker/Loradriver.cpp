@@ -1,4 +1,5 @@
 #include "LoRadriver.h"
+#include "Audioplayer.h"
 
 
 void LoRa_Init() {
@@ -34,20 +35,8 @@ void LoRa_Send(const String &payload) {
     }
 }
 
-void LoRa_Receive() {
-    int packetSize = LoRa.parsePacket();
-    if (!packetSize) return;
 
-    String msg = "";
-    while (LoRa.available()) {
-        msg += (char)LoRa.read();
-    }
-    msg.trim();
-
-    Serial.print("LoRa RX: ");
-    Serial.println(msg);
-
-    // ---- Extract device_id ----
+void handleCommand(String msg) {
     int idKey = msg.indexOf("\"device_id\":\"");
     if (idKey == -1) return;
 
@@ -56,8 +45,8 @@ void LoRa_Receive() {
     if (idEnd == -1) return;
 
     String device_id = msg.substring(idStart, idEnd);
+    if (device_id != THIS_DEVICE_ID) return;
 
-    // ---- Extract command ----
     int cmdKey = msg.indexOf("\"command\":\"");
     if (cmdKey == -1) return;
 
@@ -67,17 +56,23 @@ void LoRa_Receive() {
 
     String command = msg.substring(cmdStart, cmdEnd);
 
-    // ---- Filter device ----
-    if (device_id != THIS_DEVICE_ID) {
-        Serial.println("Not for me, ignoring");
-        return;
-    }
+    Serial.println("Accepted command: " + command);
 
-    Serial.print("Accepted command: ");
-    Serial.println(command);
-
-    // ---- Trigger Spiffs playback 
     if (command == "PLAY_TONE") {
-        trigger_play_tone();   // to SPIFFS logic
+        play_wav_file("/tone.wav");
     }
+}
+
+void LoRa_Receive() {
+    int packetSize = LoRa.parsePacket();
+    if (!packetSize) return;
+
+    String received = "";
+    while (LoRa.available()) {
+        received += (char)LoRa.read();
+    }
+    received.trim();
+
+    Serial.println(received);
+    handleCommand(received);
 }

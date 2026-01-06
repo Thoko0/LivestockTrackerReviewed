@@ -63,14 +63,14 @@ void MPU6050_Update(void) {
     float diff = abs(mpuData.magnitude - 9.81);
 
     if (diff > MOVE_THRESHOLD) {
-        mpuData.behavior = "Moving";
+        mpuData.behavior = "2";
     } else if (mpuData.pitch < GRAZING_PITCH) {
-        mpuData.behavior = "Grazing";
+        mpuData.behavior = "0";
     } else if (diff < STILL_THRESHOLD) {
-        if (abs(mpuData.ay) > 7.5) mpuData.behavior = "Sleeping";
-        else mpuData.behavior = "Standing";
+        if (abs(mpuData.ay) > 7.5) mpuData.behavior = "3";
+        else mpuData.behavior = "1";
     } else {
-        mpuData.behavior = "Standing";
+        mpuData.behavior = "1";
     }
 }
 

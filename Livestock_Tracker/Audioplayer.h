@@ -8,7 +8,7 @@
 
 void init_spiffs();
 void init_i2s();
-void play_wav_file(const char* path, Adafruit_NeoPixel &pixel);
+void play_wav_file(const char* path);
 void set_playback_speed(float speed);
 
 #endif

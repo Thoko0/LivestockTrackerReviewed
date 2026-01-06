@@ -1,6 +1,6 @@
 #ifndef LORADRIVER_H
 #define LORADRIVER_H
-#define THIS_DEVICE_ID "test_002"
+#define THIS_DEVICE_ID "test_001"
 
 #include <SPI.h>
 #include <LoRa.h>
@@ -10,6 +10,7 @@
 
 void LoRa_Init();
 void LoRa_Send(const String &payload);
-void LoRa_Receive(bool &Tone_trigger);
+void LoRa_Receive();
+void handleCommand(String msg);
 
 #endif

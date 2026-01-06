@@ -8,7 +8,7 @@ import threading
 
 
 # ==================== Configuration ====================
-SERIAL_PORT = 'COM5'       # Replace with your ESP32 COM port
+SERIAL_PORT = 'COM11'       # Replace with your ESP32 COM port
 BAUD = 115200
 SERVER_URL1 = 'https://livestocktrackerwebapp.onrender.com/data'  # FastAPI endpoint
 SERVER_URL2 = 'https://livestocktrackerwebapp.onrender.com/gateway/playtone'
@@ -33,14 +33,14 @@ def poll_playtone_background(device_id):
             # Get next command from server
             r = requests.get(f"{SERVER_URL2}/{device_id}", timeout=10)  # assume server returns next command with device_id
             if r.status_code != 200:
-                print(f"[DOWNLINK] Failed to fetch command: {r.status_code}")
+                print(f"DOWNLINK Failed to fetch command: {r.status_code}")
                 time.sleep(2)
                 continue
 
             data = r.json()
             if not data or "command" not in data:
                 # No queued command
-                print(f"[DOWNLINK] No queued command for {device_id}")
+                print(f"DOWNLINK No queued command for {device_id}")
                 time.sleep(2)
                 continue
 

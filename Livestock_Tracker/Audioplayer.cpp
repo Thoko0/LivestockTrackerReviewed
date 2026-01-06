@@ -51,7 +51,7 @@ void set_playback_speed(float speed) {
     Serial1.printf("[Audio] Playback speed set to %.2f (sample rate %d)\n", playbackSpeed, new_rate);
 }
 
-void play_wav_file(const char* path, Adafruit_NeoPixel &pixel) {
+void play_wav_file(const char* path) {
     File file = SPIFFS.open(path, "r");
     if(!file) {
         Serial1.println("[Audio] Failed to open WAV file!");
@@ -68,17 +68,6 @@ void play_wav_file(const char* path, Adafruit_NeoPixel &pixel) {
 
     while ((bytes_read = file.read(buffer, buffer_size)) > 0) {
         i2s_write(I2S_PORT, buffer, bytes_read, &bytes_written, portMAX_DELAY);
-
-        // Flash NeoPixel pink during playback
-        ledOn = !ledOn;
-        if (ledOn) pixel.setPixelColor(0, pixel.Color(255, 0, 255));
-        else pixel.setPixelColor(0, pixel.Color(0, 0, 0));
-        pixel.show();
     }
 
-    // Turn off LED at the end
-    pixel.setPixelColor(0, pixel.Color(0, 0, 0));
-    pixel.show();
-    file.close();
-    Serial1.println("[Audio] Playback finished");
 }
