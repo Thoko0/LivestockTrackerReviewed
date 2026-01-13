@@ -25,6 +25,11 @@ except serial.SerialException as e:
 # ==================Initialise writer =================
 def poll_playtone_background(device_id):
     """
+    Continuously poll the server for playtone commands and send them to an ESP32 device over serial in a separate thread.
+    @param device_id - The ID of the device to receive commands
+    @return None
+    """
+    """
     Continuously polls the server for playtone commands and
     sends them to ESP32 over serial. Runs in a separate thread.
     """

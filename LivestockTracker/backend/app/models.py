@@ -3,6 +3,17 @@ from database import Base
 from datetime import datetime
 
 class TrackerData(Base):
+    """
+    Define a SQLAlchemy model for tracking data with the following fields:
+    - id: Integer, primary key
+    - device_id: String, indexed
+    - latitude: Float
+    - longitude: Float
+    - speed: Float
+    - distance: Float
+    - behavior: Float
+    - timestamp: DateTime, defaulting to the current timestamp.
+    """
     __tablename__ = "tracker_data"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -15,6 +26,12 @@ class TrackerData(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
 
 class User(Base):
+    """
+    Define a User class that represents a table in the database with columns for id, username, and password.
+    - id: Integer, primary key
+    - username: String, unique, not nullable
+    - password: String, not nullable
+    """
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -22,6 +39,16 @@ class User(Base):
     password = Column(String, nullable=False)  # plaintext for now, later hash it
 
 class PlayToneCommand(Base):
+    """
+    Define a PlayToneCommand class that represents a command to play a tone.
+    Attributes:
+    - id: Integer, primary key
+    - device_id: String, index, not nullable
+    - command: String, not nullable
+    - created_at: DateTime, default to the current UTC datetime
+    - sent: Boolean, default to False
+    - sent_at: DateTime, nullable
+    """
     __tablename__ = "playtone_commands"
 
     id = Column(Integer, primary_key=True, index=True)  # SERIAL in PostgreSQL

@@ -47,6 +47,12 @@ def get_db():
 # -------------------------
 
 @app.post("/data")
+    """
+    Define a POST endpoint to add data to the database.
+    @param data - The data to be added, following the TrackerDataSchema.
+    @param db - The database session.
+    @return None.
+    """
 def add_data(data: TrackerDataSchema, db: Session = Depends(get_db)):
     print("ENTERED /data ENDPOINT")
     print("RAW DATA:", data)

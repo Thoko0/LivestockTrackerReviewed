@@ -24,6 +24,11 @@ function ensureMapReady() {
 // ===========================
 const mobileTabs = document.querySelectorAll('#mobile-nav .tab');
 
+/**
+ * Adds a click event listener to a tab element to handle tab switching functionality.
+ * @param {Element} tab - The tab element to add the event listener to.
+ * @returns None
+ */
 mobileTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         // remove active from all
@@ -45,6 +50,11 @@ mobileTabs.forEach(tab => {
 const tabs = document.querySelectorAll(".tab");
 const sections = document.querySelectorAll(".section");
 
+/**
+ * Adds a click event listener to a tab element that controls the display of corresponding sections.
+ * @param {Element} tab - The tab element to add the click event listener to.
+ * @returns None
+ */
 tabs.forEach(tab => {
     tab.addEventListener("click", () => {
         tabs.forEach(t => t.classList.remove("active"));
@@ -72,6 +82,11 @@ tabs.forEach(tab => {
 // ===========================
 // MAP INITIALIZATION
 // ===========================
+/**
+ * Initializes a Leaflet map with a default view centered at [0, 0] and zoom level 2.
+ * Adds a tile layer from OpenStreetMap to the map.
+ * @returns None
+ */
 function initMap() {
     map = L.map("map").setView([0, 0], 2);
 
@@ -91,6 +106,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("click", showAllTrackers);
 });
 
+/**
+ * Asynchronously fetches and displays all trackers on the map.
+ * It ensures that the map is ready, fetches the trackers from a given URL,
+ * fits the map bounds if there are any, and handles any errors that occur.
+ * @returns None
+ */
 async function showAllTrackers() {
     try {
 
@@ -195,6 +216,12 @@ async function locateTrackerOnMap() {
 //==========================
 // TABLE ROW MANAGEMENT
 //==========================
+/**
+ * Adds or updates a table row in the device table based on the tracker information provided.
+ * If the row for the tracker does not exist, a new row is created and appended to the table body.
+ * @param {Object} tracker - The tracker object containing device information.
+ * @returns None
+ */
 function addOrUpdateTableRow(tracker) {
     const tableBody = document.getElementById("device-table-body");
     let row = document.getElementById(`tracker-row-${tracker.device_id}`);
@@ -227,6 +254,17 @@ function addOrUpdateTableRow(tracker) {
 // ===========================
 document.getElementById("addTrackerBtn").addEventListener("click", addTracker);
 
+/**
+ * Asynchronously adds a new tracker using the provided device ID and name.
+ * Retrieves the device ID and name from the input fields in the document.
+ * Validates the device ID and displays an alert if it is missing.
+ * Sends a POST request to the tracker API with the device ID and name.
+ * Displays a success message if the tracker is added successfully.
+ * Clears the input fields after adding the tracker.
+ * Calls the addOrUpdateTableRow function to update the table with the new tracker data.
+ * Displays an error message if there is an error during the process.
+ * @returns None
+ */
 async function addTracker() {
     const deviceId = document.getElementById("newTrackerId").value.trim();
     const name = document.getElementById("newTrackerName").value.trim();
@@ -260,6 +298,12 @@ async function addTracker() {
 document
     .getElementById("searchTrackerBtn")
     .addEventListener("click", searchTracker);
+/**
+ * Asynchronously searches for a tracker using the provided tracker ID input by the user.
+ * Retrieves tracker information from the TRACKER_API and adds or updates a table row with the data.
+ * Displays an alert if the tracker is not found or if an error occurs during the search.
+ * @returns None
+ */
 async function searchTracker() {
     const deviceId = document.getElementById("trackerIdInput").value.trim();
     if (!deviceId) return alert("Enter a tracker ID to search");
@@ -279,6 +323,12 @@ async function searchTracker() {
 // ===========================
 // REFRESH TRACKER
 // ===========================
+/**
+ * Asynchronously refreshes the tracker data for a given device ID.
+ * @param {string} deviceId - The ID of the device to refresh the tracker for.
+ * @returns None
+ * @throws {Error} If the tracker is not found or if there is an error during the refresh process.
+ */
 async function refreshTracker(deviceId) {
     try {
         const response = await fetch(`${TRACKER_API}/${encodeURIComponent(deviceId)}`);
@@ -294,6 +344,13 @@ async function refreshTracker(deviceId) {
 // ===========================
 // DELETE TRACKER
 // ===========================
+/**
+ * Deletes a tracker with the given deviceId.
+ * @param {string} deviceId - The id of the tracker to be deleted.
+ * @param {Element} buttonElement - The button element that triggered the delete action.
+ * @returns None
+ * @throws {Error} If there is an issue with the deletion process.
+ */
 async function deleteTracker(deviceId, buttonElement) {
     if (!confirm(`Are you sure you want to delete tracker "${deviceId}"?`)) return;
 
@@ -320,6 +377,12 @@ async function deleteTracker(deviceId, buttonElement) {
 // FIND TRACKER BY SOUND
 // ===========================
 
+/**
+ * Asynchronously sends a POST request to play a tone on a specific device.
+ * @param {string} deviceId - The ID of the device to play the tone on.
+ * @param {Element} btn - The button element that triggers the tone play action.
+ * @returns None
+ */
 async function Playtone(deviceId, btn) {
     try {
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/devices/${deviceId}/play-tone`, {
@@ -351,6 +414,11 @@ async function Playtone(deviceId, btn) {
 // ===========================
 // FIND TRACKER FROM DEVICES → MAP
 // ===========================
+/**
+ * Finds and locates a tracker on the map based on the provided tracker ID.
+ * @param {string} trackerId - The ID of the tracker to locate on the map.
+ * @returns None
+ */
 function findOnMap(trackerId) {
     // 1. Switch to Maps tab
     document.getElementById("maps-tab").click();
@@ -433,6 +501,11 @@ const pieChart = new Chart(document.getElementById('pieChart'), {
 });
 
 // Update signal display function
+/**
+ * Updates the display of the signal status based on the signal value.
+ * @param {number} signalValue - The value of the signal strength.
+ * @returns None
+ */
 function updateSignalDisplay(signalValue) {
     const signalElement = document.getElementById('signalStatus');
     
@@ -454,6 +527,15 @@ function updateSignalDisplay(signalValue) {
 }
 
 // Update activity ratio function
+/**
+ * Updates the activity ratio based on the provided values for grazing, standing, moving, and resting.
+ * Calculates the percentage of active and resting time and updates the corresponding elements on the page.
+ * @param {number} grazing - The value representing time spent grazing.
+ * @param {number} standing - The value representing time spent standing.
+ * @param {number} moving - The value representing time spent moving.
+ * @param {number} resting - The value representing time spent resting.
+ * @returns None
+ */
 function updateActivityRatio(grazing, standing, moving, resting) {
     // 1. Sum up the active components
     const totalActiveValue = grazing + standing + moving;
@@ -478,6 +560,14 @@ function updateActivityRatio(grazing, standing, moving, resting) {
 }
 
 // Calculate distance using Haversine formula
+/**
+ * Calculate the distance between two points on the Earth's surface using the Haversine formula.
+ * @param {number} lat1 - The latitude of the first point.
+ * @param {number} lon1 - The longitude of the first point.
+ * @param {number} lat2 - The latitude of the second point.
+ * @param {number} lon2 - The longitude of the second point.
+ * @returns The distance between the two points in kilometers.
+ */
 function calculateHaversine(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the Earth in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -492,6 +582,12 @@ function calculateHaversine(lat1, lon1, lat2, lon2) {
 }
 
 // Update total distance function
+/**
+ * Updates the total distance traveled based on the GPS points provided.
+ * If there are less than 2 GPS points, the distance is set to 0.0 and trend icon is hidden.
+ * @param {Array} gpsPoints - Array of GPS points with latitude, longitude, and timestamp.
+ * @returns None
+ */
 function updateTotalDistance(gpsPoints) {
     if (!gpsPoints || gpsPoints.length < 2) {
         document.getElementById('distanceDisplay').innerText = "0.0";
@@ -515,6 +611,12 @@ function updateTotalDistance(gpsPoints) {
     document.getElementById('trendIcon').style.display = totalKm > 0 ? 'inline' : 'none';
 }
 
+/**
+ * Fetches the daily distance traveled by a device from a remote server.
+ * @param {string} deviceId - The ID of the device for which to fetch the daily distance.
+ * @param {string} date - The date for which to fetch the daily distance.
+ * @returns None
+ */
 async function fetchDailyDistance(deviceId, date) {
     try {
         const response = await fetch(
@@ -537,6 +639,11 @@ async function fetchDailyDistance(deviceId, date) {
 
 
 // Update line chart
+/**
+ * Updates the charts with the data from the given tracker object.
+ * @param {Object} tracker - The tracker object containing time labels, behavior values, and pie values.
+ * @returns None
+ */
 function updateCharts(tracker) {
     const labels = tracker.timeLabels || [];
     const values = tracker.behaviorValues || [];
@@ -569,6 +676,13 @@ function updateCharts(tracker) {
 }
 
 // Switch tracker function (simplified, auto-picks date if empty)
+/**
+ * Switches the tracker for a given device and date, updating the charts and fetching daily distance data.
+ * If no date is provided, it fetches the current date's data.
+ * @param {string} deviceId - The ID of the device to switch the tracker for.
+ * @param {string} date - The date for which the tracker data is needed. If not provided, defaults to current date.
+ * @returns None
+ */
 async function switchTracker(deviceId, date) {
     try {
         // If no date provided, get the first available timestamp for the tracker
@@ -603,6 +717,10 @@ async function switchTracker(deviceId, date) {
 // ===========================
 // MINIMAP INITIALIZATION 
 // ===========================
+/**
+ * Initializes a Leaflet map for the map card element.
+ * @returns None
+ */
 function initMapCard() {
     minimap = L.map("mapCard", {
         zoomControl: false,
@@ -616,6 +734,12 @@ function initMapCard() {
 
 }
 
+/**
+ * Asynchronously loads the daily path for a given device and date.
+ * @param {string} deviceId - The ID of the device for which the path is being loaded.
+ * @param {Date} date - The date for which the path is being loaded.
+ * @returns None
+ */
 async function loadDailyPath(deviceId, date) {
     try {
         const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
@@ -650,6 +774,14 @@ async function loadDailyPath(deviceId, date) {
 // -------------------------------
 
 
+/**
+ * Asynchronously loads the list of trackers from a remote URL and renders them on the page.
+ * @returns None
+ */
+/**
+ * Asynchronously loads the list of trackers from a remote URL and renders them on the page.
+ * @returns None
+ */
 async function loadTrackers() {
     try {
         const response = await fetch(`https://livestocktrackerwebapp.onrender.com/trackers/list`);
@@ -661,6 +793,11 @@ async function loadTrackers() {
     }
 }
 
+/**
+ * Renders a list of trackers on the page.
+ * @param {Array} trackers - An array of tracker objects to render.
+ * @returns None
+ */
 function renderTrackers(trackers) {
     const container = document.getElementById("trackersContainer");
     container.innerHTML = "";
@@ -702,6 +839,11 @@ function renderTrackers(trackers) {
         searchInput.style.display = "none";
     }
 
+/**
+ * Filters the available trackers based on the search term and renders the filtered list.
+ * @param {Event} e - The event object that triggered the filtering.
+ * @returns None
+ */
 function filterTrackers(e) {
     const term = e.target.value.toLowerCase();
     const filtered = availableTrackers.filter(t => (t.name || t.id || "").toLowerCase().includes(term));

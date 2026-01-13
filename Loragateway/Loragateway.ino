@@ -27,6 +27,20 @@ Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 const unsigned int max_message_length = 256;
 
 
+/**
+ * Initializes the setup for the device.
+ * - Initializes serial communication at 115200 baud rate.
+ * - Delays for 200 milliseconds.
+ * - Begins operation of the pixel.
+ * - Clears the pixel display.
+ * - Shows the pixel display.
+ * - Initializes LoRa communication at 433MHz frequency.
+ * - Sets the sync word for LoRa communication.
+ * - Sets LoRa to receive mode.
+ * - Prints a message indicating LoRa Gateway is ready and listening.
+ *
+ * @returns None
+ */
 void setup() {
   Serial.begin(115200);
   delay(200);
@@ -54,6 +68,16 @@ void setup() {
 }
 
 // ===================== Loop =====================
+/**
+ * Loops to receive and process LoRa packets.
+ *
+ * This function initializes a counter and checks for incoming LoRa packets. If a packet is received,
+ * it reads the packet data into the 'rec' array until the end of the array or no more data is available.
+ * It then checks if the first character of the received message is '>'. If so, it extracts the command
+ * from the message and sends it back using LoRa.
+ *
+ * @returns None
+ */
 void loop() {
   counter = 0;
   int packetSize = LoRa.parsePacket();

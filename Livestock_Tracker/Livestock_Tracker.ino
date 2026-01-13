@@ -17,6 +17,11 @@ bool Tone_trigger = false;
 
 
 // ==================== Setup ====================
+/**
+ * Initializes various components and sets up the system.
+ *
+ * @returns None
+ */
 void setup() {
     Serial.begin(115200);
     delay(300);
@@ -48,6 +53,13 @@ void setup() {
 }
 
 // ==================== Loop ====================
+/**
+ * Main loop function that updates GPS and MPU6050 data, receives LoRa messages,
+ * constructs a JSON payload with GPS and MPU6050 data, prints the payload to Serial,
+ * and sends the payload via LoRa. It then delays for 5 seconds before repeating.
+ *
+ * @returns None
+ */
 void loop() {
     GPS_Update();
     MPU6050_Update();
