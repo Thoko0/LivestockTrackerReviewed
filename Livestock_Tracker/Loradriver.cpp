@@ -1,4 +1,4 @@
-#include "LoRadriver.h"
+#include "Loradriver.h"
 #include "Audioplayer.h"
 
 
@@ -36,28 +36,23 @@ void LoRa_Send(const String &payload) {
 }
 
 
+
 void handleCommand(String msg) {
-    int idKey = msg.indexOf("\"device_id\":\"");
-    if (idKey == -1) return;
-
-    int idStart = idKey + 13;
-    int idEnd   = msg.indexOf("\"", idStart);
-    if (idEnd == -1) return;
-
-    String device_id = msg.substring(idStart, idEnd);
-    if (device_id != THIS_DEVICE_ID) return;
-
-    int cmdKey = msg.indexOf("\"command\":\"");
-    if (cmdKey == -1) return;
-
-    int cmdStart = cmdKey + 11;
-    int cmdEnd   = msg.indexOf("\"", cmdStart);
-    if (cmdEnd == -1) return;
-
-    String command = msg.substring(cmdStart, cmdEnd);
-
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, msg);
+    
+    if (error) {
+        Serial.println("JSON parse error");
+        return;
+    }
+    
+    String device_id = doc["device_id"];
+    String command = doc["command"];
+    
+    if (device_id != DEVICE_ID) return;
+    
     Serial.println("Accepted command: " + command);
-
+    
     if (command == "PLAY_TONE") {
         play_wav_file("/tone.wav");
     }
