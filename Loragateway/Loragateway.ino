@@ -16,6 +16,8 @@ IF data comes from Serial:
         ignore
         */
 
+
+
 char rec[256];
 int counter = 0;
 // ===================== NeoPixel =====================
@@ -42,7 +44,7 @@ const unsigned int max_message_length = 256;
  * @returns None
  */
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200);// for gateway.py
   delay(200);
 
   // NeoPixel init
@@ -84,44 +86,42 @@ void loop() {
 
   if (packetSize) {
     while (LoRa.available() && counter < sizeof(rec) - 1) {
-    rec[counter++] = (char)LoRa.read();
+      rec[counter++] = (char)LoRa.read();
     }
     rec[counter] = '\0';
 
-    // Print ONLY received data  prefix with a < to indicate its to be sent to db 
     Serial.print("<");
     Serial.println(rec);
 
-    pixel.setPixelColor(0, pixel.Color(255, 0, 0)); // RED
+    // GREEN flash = LoRa packet received
+    pixel.setPixelColor(0, pixel.Color(0, 255, 0));
     pixel.show();
-    delay(100);
+    delay(200);
     pixel.clear();
     pixel.show();
   }
+  static String message = "";
 
-  //tone command listener loop 
-
-  static char message[max_message_length]; //set up character array to store incoming message
-  static unsigned int message_position = 0;//position in the message array: where to store the next incoming byte
-  
-  
   while (Serial.available() > 0) {
-    char incomingByte = Serial.read(); //read the incoming byte
+    String line = Serial.readStringUntil('\n');
+    
+    if (line.length() > 0) {
+      // YELLOW flash = Serial command received
+      pixel.setPixelColor(0, pixel.Color(255, 255, 0));
+      pixel.show();
+      delay(100);
+      pixel.clear();
+      pixel.show();
 
-    if (incomingByte != '\n') { //if the incoming byte is not a newline character, the message is complete
-      message[message_position++] = incomingByte; //store the incoming byte in the message array increment the message position
-      if (message_position >= max_message_length -1 ) { //if the message is too long, reset the position to avoid overflow
-        message_position = 0;
-      }
-    } else {
-      message[message_position] = '\0'; //null-terminate the message
-      message_position = 0; //reset the message position for the next message
-
-
-      // ONLY forward commands that start with '>'
-      if (message[0] == '>') {
-        // Strip '>'
-        char *cmd = message + 1;
+      if (line[0] == '>') {
+        String cmd = line.substring(1);  // Remove '>'
+        
+        // BLUE flash = Sending via LoRa
+        pixel.setPixelColor(0, pixel.Color(0, 0, 255));
+        pixel.show();
+        delay(100);
+        pixel.clear();
+        pixel.show();
 
         LoRa.beginPacket();
         LoRa.print(cmd);
@@ -130,3 +130,5 @@ void loop() {
     }
   }
 }
+    
+    

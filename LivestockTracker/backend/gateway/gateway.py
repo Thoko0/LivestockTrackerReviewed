@@ -54,7 +54,8 @@ def poll_playtone_background(device_id):
             payload = json.dumps({"device_id": device_id, "command": command})
             ser.write((f">{payload}\n").encode())
             ser.flush()
-            print(f"[SERIAL →] >{payload}")
+            #[SERIAL →] >{"device_id": "test_001", "command": "PLAY_TONE"}
+            print(f">{payload}")
 
             # Poll interval
             time.sleep(2)

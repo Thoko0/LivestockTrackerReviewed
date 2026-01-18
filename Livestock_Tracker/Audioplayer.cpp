@@ -48,13 +48,14 @@ void set_playback_speed(float speed) {
     playbackSpeed = speed;
     int new_rate = (int)(ORIGINAL_SAMPLE_RATE * playbackSpeed);
     i2s_set_sample_rates(I2S_PORT, new_rate);
-    Serial1.printf("[Audio] Playback speed set to %.2f (sample rate %d)\n", playbackSpeed, new_rate);
+    Serial.printf("[Audio] Playback speed set to %.2f (sample rate %d)\n", playbackSpeed, new_rate);
 }
 
 void play_wav_file(const char* path) {
+    i2s_start(I2S_PORT);
     File file = SPIFFS.open(path, "r");
     if(!file) {
-        Serial1.println("[Audio] Failed to open WAV file!");
+        Serial.println("[Audio] Failed to open WAV file!");
         return;
     }
 
@@ -69,5 +70,9 @@ void play_wav_file(const char* path) {
     while ((bytes_read = file.read(buffer, buffer_size)) > 0) {
         i2s_write(I2S_PORT, buffer, bytes_read, &bytes_written, portMAX_DELAY);
     }
+
+    i2s_zero_dma_buffer(I2S_PORT);
+    i2s_stop(I2S_PORT);
+
 
 }

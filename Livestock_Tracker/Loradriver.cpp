@@ -38,22 +38,37 @@ void LoRa_Send(const String &payload) {
 
 
 void handleCommand(String msg) {
-    StaticJsonDocument<200> doc;
+    Serial.println("DEBUG: handleCommand received: " + msg);
+    
+    StaticJsonDocument<256> doc;
     DeserializationError error = deserializeJson(doc, msg);
     
     if (error) {
-        Serial.println("JSON parse error");
+        Serial.println("JSON parse error: " + String(error.f_str()));
         return;
     }
     
-    String device_id = doc["device_id"];
-    String command = doc["command"];
+    const char* device_id = doc["device_id"];
+    const char* command = doc["command"];
     
-    if (device_id != DEVICE_ID) return;
+    Serial.println("DEBUG: device_id = " + String(device_id));
+    Serial.println("DEBUG: command = " + String(command));
+    Serial.println("DEBUG: DEVICE_ID = " + String(DEVICE_ID));
     
-    Serial.println("Accepted command: " + command);
+    if (!device_id || !command) {
+        Serial.println("Missing fields in JSON");
+        return;
+    }
     
-    if (command == "PLAY_TONE") {
+    if (String(device_id) != DEVICE_ID) {
+        Serial.println("Device ID mismatch!");
+        return;
+    }
+    
+    Serial.println("Accepted command: " + String(command));
+    
+    if (String(command) == "PLAY_TONE") {
+        Serial.println("Playing tone...");
         play_wav_file("/tone.wav");
     }
 }
@@ -68,6 +83,6 @@ void LoRa_Receive() {
     }
     received.trim();
 
-    Serial.println(received);
+    Serial.println("LoRa packet received: " + received);
     handleCommand(received);
 }

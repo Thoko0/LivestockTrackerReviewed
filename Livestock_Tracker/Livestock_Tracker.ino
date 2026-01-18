@@ -4,6 +4,13 @@
 #include "mpu6050.h"
 #include "LoRaDriver.h"
 #include "Audioplayer.h"
+#include <WiFiManager.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+
+// ==================== Server Endpoint ====================
+const char *serverURL = "https://livestocktrackerwebapp.onrender.com/gateway/playtone/test_001";
 
 // ==================== NeoPixel ====================
 #define NEOPIXEL_PIN 38   // safe pin
@@ -11,7 +18,7 @@
 Adafruit_NeoPixel pixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 // ==================== Tone Trigger ====================
-bool Tone_trigger = false;
+//bool Tone_played = false;
 
 
 
@@ -41,7 +48,7 @@ void setup() {
         while (1);
     }
     init_spiffs();
-    init_i2s();
+    
 
     LoRa_Init();
 
@@ -50,6 +57,20 @@ void setup() {
     pixel.show();
 
     Serial.println("=== SYSTEM READY ===");
+
+    //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wm;
+  bool result;
+  result = wm.autoConnect("UNZA_Tracker", "12345678");
+  
+  if(!result){
+    Serial.println("Failed to connect to the WiFi");
+  }
+  else{
+    Serial.println("WiFi Connected.");
+  }
+
+  init_i2s();
 }
 
 // ==================== Loop ====================
@@ -67,7 +88,55 @@ void loop() {
     GPSData_t gpsData = GPS_GetData();
     MPU6050_Data_t mpuData = MPU6050_GetData();
 
-    LoRa_Receive();
+
+// Check for play tone command from db 
+    if (WiFi.status() == WL_CONNECTED)
+  {
+    HTTPClient http;
+    http.begin(serverURL);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.GET();
+
+    if (httpCode == 200)
+    {
+      String response = http.getString();
+      Serial.println("Command received: " + response);
+      // Parse JSON response
+      StaticJsonDocument<256> doc;
+      DeserializationError error = deserializeJson(doc, response);
+      
+      if (error) {
+        Serial.println("JSON parse error");
+      } else {
+        const char* device_id = doc["device_id"];
+        const char* command = doc["command"];
+        
+        // Check if device_id matches
+        if (device_id && String(device_id) == "test_001") {
+          set_playback_speed(0.5f);
+          if (!SPIFFS.exists("/tone.wav")) {
+          Serial.println("tone.wav NOT FOUND!");
+        } else {
+          Serial.println("tone.wav found.");
+        }
+          play_wav_file("/tone.wav");
+          Serial.println("Device ID matches! Playing tone...");
+          //Tone_played = true;
+        } else {
+          Serial.println("Device ID mismatch or missing");
+        }
+      }
+    }
+    else
+    {
+      Serial.println("GET failed: " + String(httpCode));
+    }
+    http.end();
+  }
+  else
+  {
+    Serial.println("WiFi disconnected!");
+  }
 
 
     String payload = "{";
