@@ -94,14 +94,14 @@ def get_latest_data(db: Session = Depends(get_db)):
     return latest_records
 
 # Listing trackers endpoint #
-@app.get("/trackers/list")
+@app.get("/tracker_data/trackers/list")
 def get_tracker_list(db: Session = Depends(get_db)):
     # Return distinct device_ids 
     trackers = db.query(TrackerData.device_id).distinct().all()
     return [{"id": t[0]} for t in trackers]  # simple list of trackers
 
 #locate trackers on map endpoint
-@app.get("/trackers/map")
+@app.get("/tracker_data/trackers/map")
 def get_trackers_for_map(db: Session = Depends(get_db)):
     trackers = db.query(TrackerData.device_id, TrackerData.latitude, TrackerData.longitude).all()
     return [
