@@ -1,7 +1,7 @@
 // ===========================
 // CONFIG
 // ===========================
-const TRACKER_API = `https://livestocktrackerwebapp.onrender.com/tracker_data`;
+const TRACKER_API = `http://127.0.0.1:8000`;
 
 // ===========================
 // CONFIG-VARIABLES
@@ -117,7 +117,7 @@ async function showAllTrackers() {
 
         ensureMapReady();   
 
-        const response = await fetch('https://livestocktrackerwebapp.onrender.com/trackers/map');
+        const response = await fetch(`${TRACKER_API}/trackers/map`);
         if (!response.ok) throw new Error("Failed to fetch trackers");
 
         const allTrackers = await response.json();
@@ -385,7 +385,7 @@ async function deleteTracker(deviceId, buttonElement) {
  */
 async function Playtone(deviceId, btn) {
     try {
-        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/devices/${deviceId}/play-tone`, {
+        const response = await fetch(`${TRACKER_API}/devices/${deviceId}/play-tone`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -620,7 +620,7 @@ function updateTotalDistance(gpsPoints) {
 async function fetchDailyDistance(deviceId, date) {
     try {
         const response = await fetch(
-            `https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`
+            `${TRACKER_API}/tracker_data/${deviceId}/path?date=${date}`
         );
 
         if (!response.ok) {
@@ -687,14 +687,14 @@ async function switchTracker(deviceId, date) {
     try {
         // If no date provided, get the first available timestamp for the tracker
         if (!date) {
-            const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}`);
+            const res = await fetch(`${TRACKER_API}/tracker_data/${deviceId}`);
             const data = await res.json();
             date = data.timestamp ? new Date(data.timestamp).toISOString().slice(0, 10) 
                                   : new Date().toISOString().slice(0, 10);
         }
 
         // Fetch chart data from backend
-        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/chart?date=${date}`);
+        const response = await fetch(`${TRACKER_API}/tracker_data/${deviceId}/chart?date=${date}`);
         const tracker = await response.json();
 
         console.log("Fetching data for device:", deviceId, "on date:", date);
@@ -742,7 +742,7 @@ function initMapCard() {
  */
 async function loadDailyPath(deviceId, date) {
     try {
-        const res = await fetch(`https://livestocktrackerwebapp.onrender.com/tracker_data/${deviceId}/path?date=${date}`);
+        const res = await fetch(`${TRACKER_API}/tracker_data/${deviceId}/path?date=${date}`);
         const points = await res.json();
 
         if (!points || points.length === 0) return;
@@ -784,7 +784,7 @@ async function loadDailyPath(deviceId, date) {
  */
 async function loadTrackers() {
     try {
-        const response = await fetch(`https://livestocktrackerwebapp.onrender.com/trackers/list`);
+        const response = await fetch(`${TRACKER_API}/trackers/list`);
         if (!response.ok) throw new Error("Failed to fetch trackers");
         availableTrackers = await response.json();
         renderTrackers(availableTrackers);
