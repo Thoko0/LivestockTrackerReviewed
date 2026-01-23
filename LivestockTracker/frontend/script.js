@@ -1,9 +1,7 @@
 // ===========================
 // CONFIG
 // ===========================
-const TRACKER_API = `http://127.0.0.1:8000`;
-
-fetch(`${TRACKER_API}/data`)
+const TRACKER_API = `http://127.0.0.1:8000/tracker_data`;
 // ===========================
 // CONFIG-VARIABLES
 // ===========================
