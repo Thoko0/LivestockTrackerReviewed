@@ -193,6 +193,10 @@ async function locateTrackerOnMap() {
 
         if (isNaN(lat) || isNaN(lon)) return alert("Tracker has no valid location");
 
+        // Remove all existing markers
+        trackerMarkers.forEach(m => map.removeLayer(m));
+        trackerMarkers = [];
+
         // Remove previous marker if exists
         if (trackerMarker) trackerMarker.remove();
 
