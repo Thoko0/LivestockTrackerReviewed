@@ -1,26 +1,36 @@
 
 
 document.getElementById("loginButton").addEventListener("click", async () => {
-    const username = document.querySelector("input[name='username']").value;
-    const password = document.querySelector("input[name='password']").value;
+    // Get values using id
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     try {
         const response = await fetch("http://localhost:8000/login", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({ username, password })
         });
 
         if (!response.ok) {
-            alert("Invalid username or password");
+            // Show error message
+            const errorMsg = document.getElementById("errorMsg");
+            errorMsg.textContent = "Invalid username or password";
+            errorMsg.classList.remove("hidden");
             return;
         }
 
         const data = await response.json();
-        localStorage.setItem("access_token", "dummy-token"); // or JWT later
-        window.location.href = "/dashboard.html"; // redirect to main page
+        // For now, store a dummy token (replace with JWT later)
+        localStorage.setItem("access_token", "dummy-token");
+
+        // Redirect to dashboard
+        window.location.href = "/main.html";    
+
     } catch (error) {
         console.error(error);
-        alert("Server error");
+        const errorMsg = document.getElementById("errorMsg");
     }
 });
