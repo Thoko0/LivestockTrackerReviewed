@@ -5,6 +5,9 @@ const token = localStorage.getItem("access_token");
 
 if (!token) {
     window.location.href = "/login.html";
+} else {
+    console.log("User is logged in with token:", token);
+    window.location.href = "/main.html";
 }
 
 
