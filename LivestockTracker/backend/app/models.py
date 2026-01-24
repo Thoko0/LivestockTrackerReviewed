@@ -36,7 +36,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)  # plaintext for now, later hash it
+    password = Column(String, nullable=False) # password stored as hashed
 
 class PlayToneCommand(Base):
     """

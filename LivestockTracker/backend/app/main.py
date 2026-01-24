@@ -11,8 +11,11 @@ from models import Base, TrackerData, User, PlayToneCommand
 from schemas import TrackerDataSchema, UserLogin
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from passlib.context import CryptContext
 
 app = FastAPI()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 
 origins = [
@@ -138,10 +141,15 @@ def get_tracker_location(device_id: str, db: Session = Depends(get_db)):
 # -------------------------
 @app.post("/login")
 def login(request: UserLogin, db: Session = Depends(get_db)):
+    # Find the user by username
     user = db.query(User).filter(User.username == request.username).first()
-    if user and user.password == request.password:
-        return {"username": user.username}
-    raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # If user does not exist or password does not match
+    if not user or not pwd_context.verify(request.password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # Login successful — return user info (later you can add JWT)
+    return {"username": user.username}
 
 # -------------------------
 # History Endpoint (for reports)
