@@ -8,7 +8,7 @@ import threading
 
 
 # ==================== Configuration ====================
-SERIAL_PORT = 'COM11'       # Replace with your ESP32 COM port
+SERIAL_PORT = 'COM11'      
 BAUD = 115200
 SERVER_URL1 = 'https://livestocktrackerwebapp.onrender.com/data'  # FastAPI endpoint
 SERVER_URL2 = 'https://livestocktrackerwebapp.onrender.com/gateway/playtone'
@@ -24,15 +24,6 @@ except serial.SerialException as e:
 
 # ==================Initialise writer =================
 def poll_playtone_background(device_id):
-    """
-    Continuously poll the server for playtone commands and send them to an ESP32 device over serial in a separate thread.
-    @param device_id - The ID of the device to receive commands
-    @return None
-    """
-    """
-    Continuously polls the server for playtone commands and
-    sends them to ESP32 over serial. Runs in a separate thread.
-    """
     while True:
         try:
             # Get next command from server
@@ -54,7 +45,7 @@ def poll_playtone_background(device_id):
             payload = json.dumps({"device_id": device_id, "command": command})
             ser.write((f">{payload}\n").encode())
             ser.flush()
-            #[SERIAL →] >{"device_id": "test_001", "command": "PLAY_TONE"}
+            #SERIAL >{"device_id": "test_001", "command": "PLAY_TONE"}
             print(f">{payload}")
 
             # Poll interval
@@ -91,11 +82,11 @@ while True:
             # ---- START TOKEN LOGIC ----
             if line.startswith(">"):
                 # This is a command we sent (or serial echo) → ignore
-                print("[SERIAL] Ignored outgoing echo")
+                print("SERIAL Ignored outgoing echo")
                 continue
 
             if not line.startswith("<"):
-                print("[SERIAL] Unknown message format, skipping")
+                print("SERIAL Unknown message format, skipping")
                 continue
 
             # Remove '<' token
@@ -111,15 +102,15 @@ while True:
                 print(f"Parse error: invalid JSON ({e})")
                 continue
 
-            # Send to FastAPI
+            # Send to API
             try:
                 response = requests.post(SERVER_URL1, json=data, timeout=5)
                 if response.status_code == 200:
-                    print("[HTTP] Successfully sent to FastAPI!")
+                    print("HTTP Successfully sent to API!")
                 else:
-                    print(f"[HTTP] Failed → {response.status_code}: {response.text}")
+                    print(f"HTTP Failed → {response.status_code}: {response.text}")
             except requests.RequestException as e:
-                print(f"[HTTP] Connection error: {e}")
+                print(f"HTTP Connection error: {e}")
 
         
             
