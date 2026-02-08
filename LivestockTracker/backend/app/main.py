@@ -20,7 +20,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 origins = [
     "https://livestocktrackerzaf.onrender.com",  #  frontend URL
-    "http://localhost:3000",                     # if testing locally
+    "http://localhost:3000",                     # for loclal testing
 ]
 
 
@@ -148,7 +148,7 @@ def login(request: UserLogin, db: Session = Depends(get_db)):
     if not user or not pwd_context.verify(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    # Login successful — return user info (later you can add JWT)
+    # Login successful — return user info 
     return {"username": user.username}
 
 # -------------------------
