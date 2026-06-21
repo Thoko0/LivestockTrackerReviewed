@@ -306,3 +306,10 @@ def get_queued_playtone(device_id: str, db: Session = Depends(get_db)):
         print("CRASH:", e)
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+#runs the run command automatcially on the right port specified for front end 
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
